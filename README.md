@@ -27,8 +27,6 @@ USAGE:
 
 
 
-
-
 *How to install, configure, and run the application.
 *Any additional details the grader may need to run your code.
 *Keep in mind that your grader may be unfamiliar with the problem domain. If you think that's a possibility, you may wish to add a brief discussion of the vocabulary and concepts used in the application.
