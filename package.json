@@ -1,0 +1,11 @@
+{
+  "name": "CookBook",
+  "version": "1.0.0",
+  "description": "PROJECT NAME AND DESCRIPTION:   The CookBook is an application used to store recipes within categories.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
