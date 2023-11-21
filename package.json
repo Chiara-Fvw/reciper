@@ -4,6 +4,10 @@
   "description": "Reciper is an application used to store recipes within categories.",
   "main": "reciper.js",
   "scripts": {
+    "start": "npx nodemon reciper.js",
+    "startDb": "brew services start postgresql@14",
+    "stopDb": "brew services stop postgresql@14",
+    "debug": "npx nodemon --inspect cookbook.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
