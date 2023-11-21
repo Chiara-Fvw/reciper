@@ -7,7 +7,7 @@
     "start": "npx nodemon reciper.js",
     "startDb": "brew services start postgresql@14",
     "stopDb": "brew services stop postgresql@14",
-    "debug": "npx nodemon --inspect cookbook.js",
+    "debug": "npx nodemon --inspect reciper.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
