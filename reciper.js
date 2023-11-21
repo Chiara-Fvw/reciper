@@ -46,7 +46,44 @@ app.use((req, res, next) => {
   res.locals.flash = req.session.flash;
   delete req.session.flash; //Delete after saving otherwise the message won't never go away.
   next();
-})
+});
+
+const requiresAuthentication = (req, res, next) => {
+  if (!res.locals.signedIn) {
+    res.redirect(302, "/users/signin");
+  } else {
+    next();
+  };
+}
+
+//Prueba route
+app.get("/", (req, res) => {
+  res.render("layout");
+});
+
+// Display Welcome page: The name and button signin
+
+// Display the Home page: user's recipe book displaying categories
+
+// Clic on a category and open the category page that shows all the recipes for that category
+
+//Open add forms:
+  // For category
+  // For recipe
+
+//Open edit form:
+  // For category
+  // For recipe
+
+// Category Settings:
+  // Create a new category
+  // Edit a category
+  // Delete a category
+
+//Recipe settings:
+  // Create a recipe
+  // Edit a recipe
+  // Delete a recipe
 
 app.use((err, req, res, _next) => {
   console.log(err);
