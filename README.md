@@ -1,5 +1,5 @@
 PROJECT NAME AND DESCRIPTION:
-  The CookBook is an application used to store recipes within categories. 
+  The Reciper is an application used to store recipes within categories. 
 
 INSTALLATION:
   Install all modules by running `npm install`on your cli.
