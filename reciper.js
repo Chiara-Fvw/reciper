@@ -50,20 +50,30 @@ app.use((req, res, next) => {
 
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
-    res.redirect(302, "/users/signin");
+    res.redirect(302, "/user/signin");
   } else {
     next();
   };
 }
 
-//Prueba route
+// Display Welcome page: The app's name and button signin
 app.get("/", (req, res) => {
-  res.render("layout");
+  res.render("welcome");
 });
 
-// Display Welcome page: The name and button signin
+//Display sign-in form:
+app.get("/user/signin", (req, res) => {
+  res.render("signin");
+})
 
 // Display the Home page: user's recipe book displaying categories
+app.get("/home", requiresAuthentication, catchError(async (req, res) => {
+  let categories = await res.locals.store.getCategories();
+  res.render("home", {
+    categories
+  });
+})
+);
 
 // Clic on a category and open the category page that shows all the recipes for that category
 
@@ -84,6 +94,34 @@ app.get("/", (req, res) => {
   // Create a recipe
   // Edit a recipe
   // Delete a recipe
+
+//Handle sign in
+app.post("/user/signin", catchError(async(req, res) => {
+  let username = req.body.username.trim();
+  let password = req.body.password;
+
+  let authenticated = await res.locals.store.authenticate(username, password);
+
+  if (!authenticated) {
+    req.flash("error", "Invalid credentials.");
+    res.render("signin", {
+      flash: req.flash(),
+      username: req.body.username,
+    });
+  } else {
+    req.session.username = username;
+    req.session.signedIn = true;
+    req.flash("info", `Welcome ${username}!`);
+    res.redirect("/home");
+  }
+})
+);
+//Handle sing out
+app.post("/user/signout", (req, res) => {
+  delete req.session.username;
+  delete req.session.signedIn;
+  res.redirect("/");
+})
 
 app.use((err, req, res, _next) => {
   console.log(err);
