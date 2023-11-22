@@ -12,9 +12,10 @@ html(lang="en-US")
       section#topbar
         h1 Reciper
         if (username)
-          form(action="/user/signout" method="post") 
-            p Logged in as: #{username}
-            button Sing Out
+          div.userInfo
+            p Logged in as: #[span(class="usernameStyle") #{username}] 
+            form(action="/user/signout" method="post") 
+              button Sing Out
       nav.menu
         block backMenu 
         block actionMenu
@@ -28,4 +29,4 @@ html(lang="en-US")
       block main 
         p hello
     footer
-      p bye
+      p Footer Information©

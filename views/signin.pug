@@ -3,15 +3,20 @@ extends layout
 block backMenu 
 block actionMenu
 block main 
-  form(action="/user/signin" method="post") 
-    dl 
-      dt 
-        label(for="username") Username:
-      dd 
-        input(type="text" name="username" placeholder="username" value=username) 
-      dt 
-        label(for="password") Password:
-      dd 
-        input(type="password" name="password" placeholder="password")
-    fieldset.formButtons 
-      input(type="submit" value="Sign In")
+  section#signin
+    h1 Sign in 
+    p And see all your delicious recipes.
+    form(action="/user/signin" method="post") 
+      dl 
+        div.formRow
+          dt 
+            label(for="username") Username:
+          dd 
+            input(type="text" name="username" placeholder="username" value=username) 
+        div.formRow
+          dt 
+            label(for="password") Password:
+          dd 
+            input(type="password" name="password" placeholder="password")
+      fieldset.formButtons 
+        input(type="submit" value="Sign In")

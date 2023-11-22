@@ -3,4 +3,9 @@ extends layout
 block backMenu 
 block actionMenu
 block main 
-  p home
+  section
+    h1 What do you want to prepare?
+    ul.categories   
+      each category in categories 
+        li  
+          a(href=`/category/${category.id}`)= category.title 
