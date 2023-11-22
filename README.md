@@ -13,7 +13,7 @@ INSTALLATION:
     14.7
 
 CONFIGURATION:
-  Create a database named XXXX and import the schema.sql file to it.
+  Create a database named reciper and import the schema.sql file to it.
   Insert the seed data by importing the lib/seed-data.sql file.
   Although sharing the user login data is an unsecure practice, I am providing a user-data.sql file for examination purposes.
 
@@ -21,9 +21,9 @@ USAGE:
   To start the application use the `npm start`command.
   
   The app will run on port 3000 of your localhost.
-  The profiles created are:
+  The user with seed data credentials are:
     User1: admin / secret
-    User2: person / private
+
 
 
 
