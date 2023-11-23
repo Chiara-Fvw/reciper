@@ -5,13 +5,13 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
   id serial PRIMARY KEY,
-  title text UNIQUE NOT NULL,
+  category text UNIQUE NOT NULL,
   username text NOT NULL
 );
 
 CREATE TABLE recipes (
   id serial PRIMARY KEY,
-  title text UNIQUE NOT NULL,
+  recipe text UNIQUE NOT NULL,
   prep_time integer NOT NULL,
   serves integer NOT NULL,
   ingredients text NOT NULL,
