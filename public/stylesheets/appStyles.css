@@ -66,6 +66,7 @@ input[type="submit"],
   display: flex;
   justify-content: space-around;
 }
+
 .userInfo p, .userInfo form {
   width: 150px;
   text-align: center;
@@ -125,6 +126,15 @@ section {
   color: blue;
 }
 
+button.deletion {
+  all: initial;
+}
+
+nav.menu {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Welcome Page */
 .welcome h1 {
   font-size: 32px;
@@ -156,6 +166,31 @@ div.formRow dd input {
 }
 
 /* Home */
+/* Recipe */
+.recipeInfo {
+  max-width: 80%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.details, .ingredients, .steps {
+  border: 2px solid blue;
+  padding: 1.6rem;
+}
+
+.details p {
+  text-align: center;
+  margin: 0 10px;
+  display: inline-block;
+}
 
 /* Footer */
 footer {

@@ -1,11 +1,17 @@
 extends layout
 
-block backMenu 
+block backMenu
+  a(href="/home") Home
+
 block actionMenu
+  a(href=`/category/${categoryId}/edit`) Edit Category
+  form(action="")
+    button.deletion Delete Category
+
 block main 
   section
     h1= categoryTitle
     ul.resultList   
       each recipe in recipes 
         li  
-          a(href=`/recipe/${recipe.id}`)= recipe.recipe 
+          a(href=`/recipe/${categoryId}/${recipe.id}`)= recipe.recipe 

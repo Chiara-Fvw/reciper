@@ -80,14 +80,33 @@ app.get("/home", requiresAuthentication,
 app.get("/category/:id", requiresAuthentication, 
   catchError(async(req, res) => {
     let categoryId = req.params.id;
-    let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
 
+    let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
     if(!categoryTitle) throw new Error("Category title not found.");
 
     let recipes = await res.locals.store.getRecipes(+categoryId);
 
     res.render("category", {
       recipes,
+      categoryTitle,
+      categoryId
+    });
+  })
+);
+
+//Display the recipe view
+app.get("/recipe/:category/:id", requiresAuthentication,
+  catchError(async(req, res) => {
+    let id = req.params.id;
+    let category = req.params.category;
+
+    let categoryTitle = await res.locals.store.getCategoryTitle(+category);
+    if(!categoryTitle) throw new Error("Category title not found.");
+
+    let recipeInfo = await res.locals.store.displayRecipe(+id);
+    if(!recipeInfo) throw new Error("The recipe doesn't exist.");
+    res.render("recipe", {
+      recipeInfo,
       categoryTitle
     });
   })
@@ -132,12 +151,13 @@ app.post("/user/signin", catchError(async(req, res) => {
   }
 })
 );
+
 //Handle sing out
 app.post("/user/signout", (req, res) => {
   delete req.session.username;
   delete req.session.signedIn;
   res.redirect("/");
-})
+});
 
 app.use((err, req, res, _next) => {
   console.log(err);
