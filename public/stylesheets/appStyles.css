@@ -85,11 +85,16 @@ input[type="submit"],
   color: white;
 }
 
+.flashContainer {
+  width: 80%;
+  margin: auto;
+}
+
 .flash {
   background-color: #cbe5f2;
   color: #3399cc;
   margin: 20px 0 1.5rem;
-  max-width: 1000px;
+  max-width: 100%;
   padding: 10px 20px;
 }
 

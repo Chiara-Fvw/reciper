@@ -67,15 +67,31 @@ app.get("/user/signin", (req, res) => {
 })
 
 // Display the Home page: user's recipe book displaying categories
-app.get("/home", requiresAuthentication, catchError(async (req, res) => {
-  let categories = await res.locals.store.getCategories();
-  res.render("home", {
-    categories
-  });
-})
+app.get("/home", requiresAuthentication, 
+  catchError(async (req, res) => {
+    let categories = await res.locals.store.getCategories();
+    res.render("home", {
+      categories
+    });
+  })
 );
 
-// Clic on a category and open the category page that shows all the recipes for that category
+// Click on a category and open the category page that shows all the recipes for that category
+app.get("/category/:id", requiresAuthentication, 
+  catchError(async(req, res) => {
+    let categoryId = req.params.id;
+    let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
+
+    if(!categoryTitle) throw new Error("Category title not found.");
+
+    let recipes = await res.locals.store.getRecipes(+categoryId);
+
+    res.render("category", {
+      recipes,
+      categoryTitle
+    });
+  })
+);
 
 //Open add forms:
   // For category
