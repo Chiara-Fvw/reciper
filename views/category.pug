@@ -5,7 +5,7 @@ block backMenu
 
 block actionMenu
   a(href=`/category/${categoryId}/edit`) Edit Category
-  form(action="")
+  form(action=`/category/${categoryId}/delete`)
     button.deletion Delete Category
 
 block main 

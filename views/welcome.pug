@@ -6,4 +6,7 @@ block main
   section.welcome
     h1 Reciper 
     p All your recipes in just one click.
-    a.button(href="/user/signin") Sign In
+    - if (username)
+      a.button(href="/home") View Recipes
+    - else 
+      a.button(href="/user/signin") Sign In

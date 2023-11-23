@@ -5,7 +5,7 @@ block backMenu
 
 block actionMenu
   a(href=`/category/${recipeInfo.category_id}/edit`) Edit Recipe
-  form(action="")
+  form(action=`/category/${recipeInfo.category_id}/delete`)
     button.deletion Delete Recipe
 
 block main 
