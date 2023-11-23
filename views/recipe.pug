@@ -1,0 +1,11 @@
+extends layout
+
+block backMenu 
+block actionMenu
+block main 
+  section
+    h1= categoryTitle
+    ul.resultList   
+      each recipe in recipes 
+        li  
+          a(href=`/recipe/${recipe.id}`)= recipe.recipe 

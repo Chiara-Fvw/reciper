@@ -5,7 +5,7 @@ block actionMenu
 block main 
   section
     h1 What do you want to prepare?
-    ul.categories   
+    ul.resultList   
       each category in categories 
         li  
-          a(href=`/category/${category.id}`)= category.title 
+          a(href=`/category/${category.id}`)= category.category 
