@@ -1,13 +1,12 @@
 extends layout
 
 block backMenu
-  a(href="/home") Home
+  a.backMenu(href="/home") Home
 
 block actionMenu
   div.actionMenu
-    a(href="/recipes/new") Add a Recipe 
     a(href=`/category/${categoryId}/edit`) Edit Category
-    form(action=`/category/${categoryId}/delete`)
+    form.delete(action=`/category/${categoryId}/delete`)
       button.deletion Delete Category
 
 block main 

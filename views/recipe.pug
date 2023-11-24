@@ -1,13 +1,13 @@
 extends layout
 
 block backMenu
-  a(href=`/category/${recipeInfo.category_id}`)= categoryTitle
+  a.backMenu(href=`/category/${recipeInfo.category_id}`)= categoryTitle
 
 block actionMenu
-  div
+  div.actionMenu
     a(href=`/category/${recipeInfo.category_id}/edit`) Edit Recipe
-    form(action=`/category/${recipeInfo.category_id}/delete`)
-      button.deletion Delete Recipe
+    form.delete(action=`/category/${recipeInfo.category_id}/delete`)
+      button Delete Recipe
 
 block main 
   section

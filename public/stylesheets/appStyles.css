@@ -124,18 +124,36 @@ section {
 }
 
 .usernameStyle {
-  color: blue;
-}
-
-button.deletion {
-  all: initial;
+  font-weight: bold;
 }
 
 nav.menu {
   display: flex;
   justify-content: space-between;
+  font-size: 16px;
 }
 
+.backMenu {
+  text-transform: uppercase;
+}
+
+.actionMenu {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px 30px;
+}
+
+form.delete button {
+  all: initial;
+  font: inherit;
+}
+
+nav.menu .actionMenu a, nav.menu form.delete button {
+  border: solid 1px lightblue;
+  padding: 10px 5px;
+  border-radius: 0.6em;
+  cursor: pointer;
+}
 /* Welcome Page */
 .welcome h1 {
   font-size: 32px;
