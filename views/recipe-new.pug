@@ -1,0 +1,39 @@
+extends layout
+
+block backMenu 
+block actionMenu
+block main 
+  section
+    h1 New Recipe
+    p Add a delicious recipe.
+    form(action="/recipes/new" method="post") 
+      dl 
+          dt 
+            label(for="recipe") Title:
+          dd 
+            input(type="text" name="title" placeholder="Title" value=recipe) 
+          dt 
+            label(for="category") Category:
+          dd 
+            select(id="category" name="category")
+              each category in categories 
+                option(value= category.id) #{category.category}
+          dt 
+            label(for="serves") Serves:
+          dd 
+            input(type="number" name="serves" placeholder="Serves")
+          dt 
+            label(for="prep_time") Preparation time (in minutes):
+          dd 
+            input(type="number" name="prep_time" placeholder="Minutes")
+          dt 
+            label(for="ingredients") Ingredients (separated by comma (,)):
+          dd 
+            textarea(name="ingredients", cols="30", rows="10") 
+          dt 
+            label(for="steps") Preparation steps:
+          dd 
+            textarea(name="steps", cols="30", rows="10") 
+
+      fieldset.formButtons 
+        input(type="submit" value="Save")

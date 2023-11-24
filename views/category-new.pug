@@ -1,0 +1,16 @@
+extends layout
+
+block backMenu 
+block actionMenu
+block main 
+  section
+    h1 New Category
+    p 
+    form(action="/categories/new" method="post") 
+      dl 
+          dt 
+            label(for="category") Title:
+          dd 
+            input(type="text" name="category" placeholder="Title" value= category) 
+      fieldset.formButtons 
+        input(type="submit" value="Save")

@@ -4,9 +4,11 @@ block backMenu
   a(href="/home") Home
 
 block actionMenu
-  a(href=`/category/${categoryId}/edit`) Edit Category
-  form(action=`/category/${categoryId}/delete`)
-    button.deletion Delete Category
+  div.actionMenu
+    a(href="/recipes/new") Add a Recipe 
+    a(href=`/category/${categoryId}/edit`) Edit Category
+    form(action=`/category/${categoryId}/delete`)
+      button.deletion Delete Category
 
 block main 
   section
