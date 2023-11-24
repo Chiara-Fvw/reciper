@@ -114,7 +114,21 @@ app.get("/recipe/:category/:id", requiresAuthentication,
 
 //Open add forms:
   // For category
+app.get("/categories/new", requiresAuthentication, catchError(async(req, res) => {
+  res.render("category-new");
+})
+);
+
   // For recipe
+app.get("/recipes/new", requiresAuthentication, 
+  catchError(async(req, res) => {
+    let categories = await res.locals.store.getCategories();
+    if(!categories) throw new Error("No categories found.");
+    res.render("recipe-new", {
+      categories
+    });
+  })
+);
 
 //Open edit form:
   // For category
@@ -122,11 +136,102 @@ app.get("/recipe/:category/:id", requiresAuthentication,
 
 // Category Settings:
   // Create a new category
+app.post("/categories/new", 
+  requiresAuthentication, 
+  [
+    body("category")
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("The category must have a title.")
+  ],
+  catchError(async(req, res) => {
+    let errors = validationResult(req);
+    let category = req.body.category;
+
+    let rerenderCategory = () => {
+      res.render("category-new", {
+        category,
+        flash: req.flash()
+      });
+    }
+
+    if(!errors.isEmpty()) {
+      req.flash("error", errors[0].msg);
+      rerenderCategory();
+    } else if (await res.locals.store.existsCategory(category)) {
+      req.flash("error", "The category already exists.");
+      rerenderCategory();
+    } else {
+      let created = await res.locals.store.addCategory(category);
+      if(!created) throw new Error("Not found.");
+      req.flash("success", "The new category has been added to your book.");
+      res.redirect("/home");
+    }
+  })
+);
   // Edit a category
   // Delete a category
 
 //Recipe settings:
   // Create a recipe
+app.post("/recipes/new", 
+  requiresAuthentication,
+  [
+    body("title")
+      .trim()
+      .isLength({ min:1 })
+      .withMessage("Recipes must have a title."),
+    body("serves")
+      .isNumeric()
+      .withMessage('Serves must be numeric')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("There must be at least one serve."),
+    body("prep_time")
+      .isNumeric()
+      .withMessage('Preparation time must be set in number of minutes')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("Every preparation must take at least one minute."),
+    body("ingredients")
+      .trim()
+      .isLength({ min: 4 })
+      .withMessage("Recipes must have ingredients."),
+    body("steps")
+      .trim()
+      .isLength({ min:4 })
+      .withMessage("Recipes need directions...")
+  ], 
+  catchError(async(req, res) => {
+    let categories = await res.locals.store.getCategories();
+    let title = req.body.title;
+    let category = req.body.category;
+    let serves = req.body.serves;
+    let prep_time = req.body.prep_time;
+    let ingredients = req.body.ingredients;
+    let steps = req.body.steps;
+
+    let errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.render("recipe-new", {
+        title,
+        category,
+        serves,
+        prep_time,
+        ingredients,
+        steps,
+        categories,
+        flash: req.flash()
+      });
+    } else {
+      let addedRecipe = await res.locals.store.addRecipe(title, category, serves, prep_time, ingredients, steps);
+      if(!addedRecipe) throw new Error("Not found.");
+
+      req.flash("success", "The new recipe has been added to your book!");
+      res.redirect(`/category/${category}`);
+    }
+  })
+);
   // Edit a recipe
   // Delete a recipe
 
