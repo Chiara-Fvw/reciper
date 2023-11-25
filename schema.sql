@@ -11,7 +11,7 @@ CREATE TABLE categories (
 
 CREATE TABLE recipes (
   id serial PRIMARY KEY,
-  recipe text UNIQUE NOT NULL,
+  recipe text NOT NULL,
   prep_time integer NOT NULL,
   serves integer NOT NULL,
   ingredients text NOT NULL,

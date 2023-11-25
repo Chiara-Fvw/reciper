@@ -39,3 +39,4 @@ You can also use this file to talk about any design choices or trade-offs you ma
 
 ******
 
+In the Reciper, the recipes table will not have the `UNIQUE` constraint, in this way the user will be able to edit the content of the recipe without changing the recipe name. However, the user won't be able to create a recipe if the name already exists, in an apptempt to avoid recipe duplication.
