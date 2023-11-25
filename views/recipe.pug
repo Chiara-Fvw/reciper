@@ -5,8 +5,8 @@ block backMenu
 
 block actionMenu
   div.actionMenu
-    a(href=`/category/${recipeInfo.category_id}/edit`) Edit Recipe
-    form.delete(action=`/category/${recipeInfo.category_id}/delete`)
+    a(href=`/recipes/edit/${recipeInfo.id}`) Edit Recipe
+    form.delete(action=`/recipes/delete/${recipeInfo.id}` method="post")
       button Delete Recipe
 
 block main 
@@ -19,7 +19,7 @@ block main
             p= `Serves: ${recipeInfo.serves}` 
             p= `Minutes: ${recipeInfo.prep_time}`
           .steps 
-            h2 Preparation steps: 
+            h2 Instructions: 
             ul 
               each step in recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g) 
                 li= step

@@ -145,6 +145,25 @@ app.get("/categories/edit/:id",
   }) 
 );
   // For recipe
+app.get("/recipes/edit/:id", requiresAuthentication, 
+  catchError(async(req,res) => {
+    let id = req.params.id;
+    let recipe = await res.locals.store.getRecipe(+id);
+    if (!recipe) throw new Error("Not found.");
+    let categories = await res.locals.store.getCategories();
+    res.render("recipe-edit", {
+      id,
+      title: recipe.recipe,
+      category: recipe.category_id,
+      serves: recipe.serves,
+      prep_time: recipe.prep_time,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      categories,
+      flash: req.flash()
+    });
+  })
+);
 
 // Category Settings:
   // Create a new category
@@ -257,13 +276,7 @@ app.post("/recipes/new",
   ], 
   catchError(async(req, res) => {
     let categories = await res.locals.store.getCategories();
-    let title = req.body.title;
-    let category = req.body.category;
-    let serves = req.body.serves;
-    let prep_time = req.body.prep_time;
-    let ingredients = req.body.ingredients;
-    let steps = req.body.steps;
-
+    let { title, category, serves, prep_time, ingredients, steps } = req.body;
     let errors = validationResult(req);
 
     if(!errors.isEmpty()) {
@@ -288,7 +301,67 @@ app.post("/recipes/new",
   })
 );
   // Edit a recipe
+app.post("/recipes/edit/:id", 
+  requiresAuthentication,
+  [
+    body("title")
+      .trim()
+      .isLength({ min:1 })
+      .withMessage("Recipes must have a title."),
+    body("serves")
+      .isNumeric()
+      .withMessage('Serves must be numeric')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("There must be at least one serve."),
+    body("prep_time")
+      .isNumeric()
+      .withMessage('Preparation time must be set in number of minutes')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("Every preparation must take at least one minute."),
+    body("ingredients")
+      .trim()
+      .isLength({ min: 4 })
+      .withMessage("Recipes must have ingredients."),
+    body("steps")
+      .trim()
+      .isLength({ min:4 })
+      .withMessage("Recipes need directions...")
+  ],
+  catchError(async(req, res) => {
+    let errors = validationResult(req);
+    let id = req.params.id;
+    let categories = await res.locals.store.getCategories();
+    let { title, category, serves, prep_time, ingredients, steps } = req.body;
+    if (!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.render("recipe-edit", {
+        title,
+        category,
+        serves,
+        prep_time,
+        ingredients,
+        steps,
+        categories,
+        flash: req.flash()
+      })
+    } else {
+      let updated = await res.locals.store.editRecipe(title, +category, serves, prep_time, ingredients, steps, +id);
+      if (!updated) throw new Error("Not found.");
+      req.flash("success", "The recipe has been updated.");
+      res.redirect(`/recipe/${category}/${id}`);
+    };
+  })
+);
   // Delete a recipe
+app.post("/recipes/delete/:id", requiresAuthentication, 
+  catchError(async(req, res) => {
+    let id = req.params.id;
+    let deleted = await res.locals.store.deleteRecipe(+id);
+    if(!deleted) throw new Error("Not found.");
+    req.flash("success", "The recipe has been deleted.");
+    res.redirect("/home");
+  })
+);
 
 //Handle sign in
 app.post("/user/signin", catchError(async(req, res) => {
