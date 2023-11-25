@@ -5,8 +5,8 @@ block backMenu
 
 block actionMenu
   div.actionMenu
-    a(href=`/category/${categoryId}/edit`) Edit Category
-    form.delete(action=`/category/${categoryId}/delete`)
+    a(href=`/categories/edit/${categoryId}`) Edit Category
+    form.delete(action=`/categories/delete/${categoryId}` method="post")
       button.deletion Delete Category
 
 block main 

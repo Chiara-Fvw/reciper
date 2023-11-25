@@ -1,7 +1,12 @@
 extends layout
 
-block backMenu 
+block backMenu
+  a.backMenu(href=`/home`) BACK
+
 block actionMenu
+  div.actionMenu
+    a(href=`/home`) Cancel
+
 block main 
   section
     h1 New Recipe

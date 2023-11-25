@@ -103,7 +103,7 @@ app.get("/recipe/:category/:id", requiresAuthentication,
     let categoryTitle = await res.locals.store.getCategoryTitle(+category);
     if(!categoryTitle) throw new Error("Category title not found.");
 
-    let recipeInfo = await res.locals.store.displayRecipe(+id);
+    let recipeInfo = await res.locals.store.getRecipe(+id);
     if(!recipeInfo) throw new Error("The recipe doesn't exist.");
     res.render("recipe", {
       recipeInfo,
@@ -114,10 +114,9 @@ app.get("/recipe/:category/:id", requiresAuthentication,
 
 //Open add forms:
   // For category
-app.get("/categories/new", requiresAuthentication, catchError(async(req, res) => {
+app.get("/categories/new", requiresAuthentication, (req, res) => {
   res.render("category-new");
-})
-);
+});
 
   // For recipe
 app.get("/recipes/new", requiresAuthentication, 
@@ -132,6 +131,19 @@ app.get("/recipes/new", requiresAuthentication,
 
 //Open edit form:
   // For category
+app.get("/categories/edit/:id", 
+  requiresAuthentication,
+  catchError(async(req, res) => {
+    let id = req.params.id;
+    let category = await res.locals.store.getCategoryTitle(+id);
+    if(!category) throw new Error("Not found.");
+    res.render("category-edit", {
+      category,
+      id,
+      flash: req.flash()
+    });
+  }) 
+);
   // For recipe
 
 // Category Settings:
@@ -170,7 +182,50 @@ app.post("/categories/new",
   })
 );
   // Edit a category
+app.post("/categories/edit/:id", 
+  requiresAuthentication,
+  [
+    body("category")
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("The category must have a title.")
+  ],
+  catchError(async(req, res) => {
+    let errors = validationResult(req);
+    let id = req.params.id;
+    let category = req.body.category;
+
+    let rerenderCategory = () => {
+      res.render("category-edit", {
+        id,
+        category,
+        flash: req.flash()
+      });
+    }
+
+    if(!errors.isEmpty()) {
+      req.flash("error", errors[0].msg);
+      rerenderCategory();
+    } else if (await res.locals.store.existsCategory(category)) {
+      req.flash("error", "This category already exists.");
+      rerenderCategory()
+    } else {
+      let updated = await res.locals.store.editCategory(category, id);
+      if (!updated) throw new Error("Not found.");
+      req.flash("success", "The category has been modified.");
+      res.redirect(`/category/${id}`);
+    }
+  }) 
+);
   // Delete a category
+app.post("/categories/delete/:id", requiresAuthentication, catchError(async(req, res) => {
+  let id = req.params.id;
+  let deleted = await res.locals.store.deleteCategory(+id);
+  if(!deleted) throw new Error("Not found.");
+  req.flash("success", "The category has been deleted.");
+  res.redirect(`/home`);
+})
+);
 
 //Recipe settings:
   // Create a recipe
