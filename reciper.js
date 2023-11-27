@@ -6,6 +6,7 @@ const store = require("connect-loki");
 const { body, validationResult } = require("express-validator");
 const PgPersistence = require("./lib/pg-persistence");
 const catchError = require("./lib/catch-error.js");
+const pagination = require("./lib/pagination.js");
 
 const app = express();
 const LokiStore = store(session);
@@ -113,13 +114,35 @@ app.get("/recipe/:category/:id", requiresAuthentication,
   })
 );
 
-//Display all the recipes together with pagination
-app.get("/recipes/all", requiresAuthentication, 
-  catchError(async(req, res) => {
-    let recipes = await res.locals.store.getAllRecipes();
-    if(!recipes) throw new Error("Not found");
+//Display all the recipes with pagination
+app.get("/recipes/all",
+   requiresAuthentication,
+   catchError(async(req, res) => {
+    let recipesCount = await res.locals.store.recipesCount();
+    if (!recipesCount) throw new Error("Not count");
+
+    const LIMIT = 2;
+    const PAGE = parseInt(req.query.page) || 1;
+    const OFFSET = (PAGE - 1) * LIMIT;
+    let recipes = await res.locals.store.getPaginatedRecipes(LIMIT, OFFSET);
+    if (!recipes) throw new Error("Not found.");
+
+    let totalPages = Math.ceil(recipesCount / LIMIT);
+    let nextPage = PAGE < totalPages ? PAGE + 1 : null;
+    let prevPage = PAGE > 1 ? PAGE - 1 : null;
+    let allPages = Array.from({length: totalPages}, (_, index) => index + 1);
+
+    let pagination = {
+      currentPage: PAGE,
+      totalPages,
+      nextPage,
+      prevPage,
+      allPages,
+    }
+    
     res.render("recipes-all", {
-      recipes
+      recipes,
+      pagination,
     });
   })
 );
