@@ -48,6 +48,7 @@ app.use((req, res, next) => {
   next();
 });
 
+//Function to test if the user have permission to access specific functionalities and views.
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
     res.redirect(302, "/user/signin");
@@ -108,6 +109,17 @@ app.get("/recipe/:category/:id", requiresAuthentication,
     res.render("recipe", {
       recipeInfo,
       categoryTitle
+    });
+  })
+);
+
+//Display all the recipes together with pagination
+app.get("/recipes/all", requiresAuthentication, 
+  catchError(async(req, res) => {
+    let recipes = await res.locals.store.getAllRecipes();
+    if(!recipes) throw new Error("Not found");
+    res.render("recipes-all", {
+      recipes
     });
   })
 );
