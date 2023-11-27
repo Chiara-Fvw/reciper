@@ -1,12 +1,12 @@
 extends layout
 
 block backMenu 
-  div
+  div.backMenu
+    a(href="/recipes/all") all Recipes
 block actionMenu
   div.actionMenu
     a(href="/categories/new") Add a category
     a(href="/recipes/new") Add a Recipe 
-    a(href="/recipes/all") View all Recipes
 block main 
   section
     h1 What do you want to prepare today?

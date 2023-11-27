@@ -1,7 +1,9 @@
 extends layout
 
 block backMenu
-  a.backMenu(href=`/category/${recipeInfo.category_id}`)= categoryTitle
+  .backMenu 
+    a(href=`/category/${recipeInfo.category_id}`)= categoryTitle
+    a(href="/recipes/all") all Recipes
 
 block actionMenu
   div.actionMenu
@@ -17,7 +19,7 @@ block main
         .left
           .details
             p= `Serves: ${recipeInfo.serves}` 
-            p= `Minutes: ${recipeInfo.prep_time}`
+            p= `Time: ${recipeInfo.prep_time}'`
           .steps 
             h2 Instructions: 
             ul 

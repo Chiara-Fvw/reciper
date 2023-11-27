@@ -7,6 +7,7 @@ a {
 body {
   color: #2e2e2e;
   font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
+  padding: 0px 25px;
 }
 
 header {
@@ -37,16 +38,16 @@ input[type="submit"],
   text-transform: uppercase;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  border-color: blue;
+  border-color: lightblue;
   color: #fff;
-  box-shadow: 0 0 40px 40px blue inset, 0 0 0 0 blue;
+  box-shadow: 0 0 40px 40px lightblue inset, 0 0 0 0 lightblue;
   transition: all 150ms ease-in-out;
 }
 .button:hover,
 .button:focus {
   color: inherit;
   outline: 0;
-  box-shadow: 0 0 10px 0 blue inset, 0 0 10px 4px blue;
+  box-shadow: 0 0 10px 0 lightblue inset, 0 0 10px 4px lightblue;
 }
 
 #topbar {
@@ -75,15 +76,15 @@ input[type="submit"],
 .userInfo form button {
   all: initial;
   font-family: inherit;
-  box-shadow: inset 0 0 0 0 #54b3d6;
-  color: #54b3d6;
+  box-shadow: inset 0 0 0 0 lightblue;
+  color: lightblue;
   margin: 0 -.25rem;
   padding: 0 .25rem;
   transition: color .3s ease-in-out, box-shadow .3s ease-in-out;
 }
 
 .userInfo form button:hover {
-  box-shadow: inset 100px 0 0 0 #54b3d6;
+  box-shadow: inset 100px 0 0 0 lightblue;
   color: white;
 }
 
@@ -135,6 +136,9 @@ nav.menu {
 
 .backMenu {
   text-transform: uppercase;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px 30px;
 }
 
 .actionMenu {
@@ -169,19 +173,31 @@ div.formRow {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 1em;
+  gap: 20px;
 }
 
 div.formRow dt {
   margin-right: 1em;
 }
 
-div.formRow dd input {
+div.formRow dd input,
+div.formRow dd select {
   border: none;
-  border-bottom: 1px solid blue;
+  border-bottom: 1px solid lightblue;
   padding: 0.5em;
+}
+
+div.formRow dd textarea {
+  border: 0.5px solid lightblue;
+  border-bottom: 1px solid lightblue;
+  padding: 0.5em;
+}
+
+.recipeForm .formRow dt {
+  width: 40%;
 }
 
 /* Home */
@@ -201,7 +217,7 @@ div.formRow dd input {
   gap: 2rem;
 }
 .details, .ingredients, .steps {
-  border: 2px solid blue;
+  border: 2px solid lightblue;
   padding: 1.6rem;
 }
 
@@ -209,6 +225,38 @@ div.formRow dd input {
   text-align: center;
   margin: 0 10px;
   display: inline-block;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 50px;
+  display: flex;
+  gap: 15px;
+}
+
+.pagination li a {
+  color: lightblue;
+  font-weight: bold;
+  padding: 3px;
+}
+
+.pagination li a.current {
+  color: white;
+  background-color: lightblue;
+  pointer-events: none;
+}
+
+.pagination li a.disabled {
+  color: gray;
+  font-weight: normal;
+  pointer-events: none;
+}
+
+/* All recipes */
+table.recipes {
+  width: 70%;
+  border: none;
+  text-align: left;
 }
 
 /* Footer */

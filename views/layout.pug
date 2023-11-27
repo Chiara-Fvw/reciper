@@ -10,7 +10,8 @@ html(lang="en-US")
   body 
     header
       section#topbar
-        h1 Reciper
+        a(href="/") 
+          img(src="/img/reciper.png", alt="Reciper")
         if (username)
           div.userInfo
             p Logged in as: #[span(class="usernameStyle") #{username}] 
@@ -29,4 +30,4 @@ html(lang="en-US")
       block main 
         p hello
     footer
-      p Footer Information©
+      p Reciper©

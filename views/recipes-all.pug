@@ -9,7 +9,7 @@ block actionMenu
 block main 
   section
     h1 All your Recipes
-    table(style='width:90%', border='1')
+    table.recipes
       tr
         th RECIPE 
         th CATEGORY
@@ -17,10 +17,22 @@ block main
         th TIME
       each recipe in recipes 
         tr
-          td= recipe.recipe
-          td= recipe.catName
+          td
+            a(href=`/recipe/${recipe.category_id}/${recipe.id}`)= recipe.recipe
+          td
+            a(href=`/category/${recipe.category_id}`)= recipe.catName
           td= recipe.serves
-          td= recipe.prep_time
+          td= `${recipe.prep_time}'`
+    article 
+      if pagination 
+        ul.pagination 
+          li 
+            a(href=`/recipes/all?page=${pagination.prevPage}` class=`${pagination.prevPage ? '' : 'disabled'}`)  &lt; 
+          each page in pagination.allPages
+            li 
+              a(href=`/recipes/all?page=${page}` class=`${pagination.currentPage === page ? 'current' : ''}`)= page
+          li 
+            a(href=`/recipes/all?page=${pagination.nextPage}` class=`${pagination.nextPage ? '' : 'disabled'}`) &gt; 
 
 
 //- When listing collections and objects, limit the amount of output per page to a maximum item count (say, 5 or 10 items per page). If there are more than this number of items, the user should be able to scroll through the data in chunks of the maximum item count. This process is called pagination.
