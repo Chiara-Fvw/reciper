@@ -80,10 +80,10 @@ app.get("/home",
       res.render("home");
     } else {
       let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages) throw new Error("The page can't be found.")
+      if (PAGE > pagination.totalPages) throw new Error("Not found.")
       
       let categories = await res.locals.store.getPaginatedCategories(LIMIT, OFFSET);
-      if(!categories) throw new Error("Categories not found.");
+      if(!categories) throw new Error("Not found.");
       
       res.render("home", {
         categories,
@@ -102,7 +102,7 @@ app.get("/category/:id", requiresAuthentication,
 
     let categoryId = req.params.id;
     let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
-    if(!categoryTitle) throw new Error("Category not found.");
+    if(!categoryTitle) throw new Error("Not found.");
     let count = await res.locals.store.recipesCount(categoryId);
     if (count === '0') {
       res.render("category", {
@@ -111,20 +111,14 @@ app.get("/category/:id", requiresAuthentication,
       });
     } else {
       let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages) {
-        req.flash("error", "The page you looked for doesn't exist.");
-        res.render("errorPage", {flash: req.flash()});
-      } else {
-        
-        let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
-
-        res.render("category", {
-          recipes,
-          categoryTitle,
-          categoryId,
-          pagination
-        });
-      };
+      if (PAGE > pagination.totalPages)  throw new Error("Not found.")
+      let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
+      res.render("category", {
+        recipes,
+        categoryTitle,
+        categoryId,
+        pagination
+      });
     };
   })
 );
@@ -136,10 +130,10 @@ app.get("/recipe/:category/:id", requiresAuthentication,
     let category = req.params.category;
 
     let categoryTitle = await res.locals.store.getCategoryTitle(+category);
-    if(!categoryTitle) throw new Error("Category title not found.");
+    if(!categoryTitle) throw new Error("Not found.");
 
     let recipeInfo = await res.locals.store.getRecipe(+id);
-    if(!recipeInfo) throw new Error("Recipe not found.");
+    if(!recipeInfo) throw new Error("Not found.");
     res.render("recipe", {
       recipeInfo,
       categoryTitle
@@ -430,8 +424,7 @@ app.post("/user/signout", (req, res) => {
 //Error handler
 app.use((err, req, res, _next) => {
   console.log(err);
-  res.status(404)
-  res.render("error", {error: err.message});
+  res.status(404).render("error", {error: err.message});
 });
 
 //Listener
