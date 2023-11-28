@@ -6,7 +6,6 @@ const store = require("connect-loki");
 const { body, validationResult } = require("express-validator");
 const PgPersistence = require("./lib/pg-persistence");
 const catchError = require("./lib/catch-error.js");
-const pagination = require("./lib/pagination.js");
 
 const app = express();
 const LokiStore = store(session);
@@ -49,7 +48,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//Function to test if the user have permission to access specific functionalities and views.
+//Middleware to test if the user have permission to access specific functionalities and views.
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
     res.redirect(302, "/user/signin");
@@ -68,31 +67,65 @@ app.get("/user/signin", (req, res) => {
   res.render("signin");
 })
 
-// Display the Home page: user's recipe book displaying categories
-app.get("/home", requiresAuthentication, 
+// Display the Home page: user's recipe book displaying categories (pagination)
+app.get("/home", 
+  requiresAuthentication,
   catchError(async (req, res) => {
-    let categories = await res.locals.store.getCategories();
-    res.render("home", {
-      categories
-    });
+    const PAGE = parseInt(req.query.page) || 1;
+    const LIMIT = 5;
+    const OFFSET = (PAGE - 1) * LIMIT;
+
+    let count = await res.locals.store.categoriesCount();
+    if (count === '0') {
+      res.render("home");
+    } else {
+      let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
+      if (PAGE > pagination.totalPages) throw new Error("The page can't be found.")
+      
+      let categories = await res.locals.store.getPaginatedCategories(LIMIT, OFFSET);
+      if(!categories) throw new Error("Categories not found.");
+      
+      res.render("home", {
+        categories,
+        pagination
+      });
+    };
   })
 );
 
-// Click on a category and open the category page that shows all the recipes for that category
+// Open the category page that shows all the recipes of that category (with pagination)
 app.get("/category/:id", requiresAuthentication, 
   catchError(async(req, res) => {
+    const PAGE = parseInt(req.query.page) || 1;
+    const LIMIT = 2;
+    const OFFSET = (PAGE - 1) * LIMIT;
+
     let categoryId = req.params.id;
-
     let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
-    if(!categoryTitle) throw new Error("Category title not found.");
+    if(!categoryTitle) throw new Error("Category not found.");
+    let count = await res.locals.store.recipesCount(categoryId);
+    if (count === '0') {
+      res.render("category", {
+        categoryTitle,
+        categoryId
+      });
+    } else {
+      let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
+      if (PAGE > pagination.totalPages) {
+        req.flash("error", "The page you looked for doesn't exist.");
+        res.render("errorPage", {flash: req.flash()});
+      } else {
+        
+        let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
 
-    let recipes = await res.locals.store.getRecipes(+categoryId);
-
-    res.render("category", {
-      recipes,
-      categoryTitle,
-      categoryId
-    });
+        res.render("category", {
+          recipes,
+          categoryTitle,
+          categoryId,
+          pagination
+        });
+      };
+    };
   })
 );
 
@@ -106,43 +139,10 @@ app.get("/recipe/:category/:id", requiresAuthentication,
     if(!categoryTitle) throw new Error("Category title not found.");
 
     let recipeInfo = await res.locals.store.getRecipe(+id);
-    if(!recipeInfo) throw new Error("The recipe doesn't exist.");
+    if(!recipeInfo) throw new Error("Recipe not found.");
     res.render("recipe", {
       recipeInfo,
       categoryTitle
-    });
-  })
-);
-
-//Display all the recipes with pagination
-app.get("/recipes/all",
-   requiresAuthentication,
-   catchError(async(req, res) => {
-    let recipesCount = await res.locals.store.recipesCount();
-    if (!recipesCount) throw new Error("Not count");
-
-    const LIMIT = 2;
-    const PAGE = parseInt(req.query.page) || 1;
-    const OFFSET = (PAGE - 1) * LIMIT;
-    let recipes = await res.locals.store.getPaginatedRecipes(LIMIT, OFFSET);
-    if (!recipes) throw new Error("Not found.");
-
-    let totalPages = Math.ceil(recipesCount / LIMIT);
-    let nextPage = PAGE < totalPages ? PAGE + 1 : null;
-    let prevPage = PAGE > 1 ? PAGE - 1 : null;
-    let allPages = Array.from({length: totalPages}, (_, index) => index + 1);
-
-    let pagination = {
-      currentPage: PAGE,
-      totalPages,
-      nextPage,
-      prevPage,
-      allPages,
-    }
-    
-    res.render("recipes-all", {
-      recipes,
-      pagination,
     });
   })
 );
@@ -427,11 +427,14 @@ app.post("/user/signout", (req, res) => {
   res.redirect("/");
 });
 
+//Error handler
 app.use((err, req, res, _next) => {
   console.log(err);
-  res.status(404).send(err.message);
+  res.status(404)
+  res.render("error", {error: err.message});
 });
 
+//Listener
 app.listen(port, host, () => {
   console.log(`Listening on port ${port} of ${host}.`)
 });
