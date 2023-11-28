@@ -259,6 +259,11 @@ table.recipes {
   text-align: left;
 }
 
+/* Error page */
+.errorPage {
+  text-align: center;
+}
+
 /* Footer */
 footer {
   padding: 50px;

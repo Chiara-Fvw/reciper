@@ -3,7 +3,7 @@ extends layout
 block backMenu
   div.backMenu
     a(href="/home") Home
-    a(href="/recipes/all") all Recipes
+    //- a(href="/recipes/all") all Recipes
 
 block actionMenu
   div.actionMenu
@@ -12,9 +12,25 @@ block actionMenu
       button.deletion Delete Category
 
 block main 
-  section
-    h1= categoryTitle
-    ul.resultList   
-      each recipe in recipes 
-        li  
-          a(href=`/recipe/${categoryId}/${recipe.id}`)= recipe.recipe 
+  if (!recipes)
+    section 
+      h1= categoryTitle 
+      p There are no recipes for this category. Why don't you add one now?
+      a.button(href="/recipes/new") Add a Recipe
+  else 
+    section
+      h1= categoryTitle
+      ul.resultList   
+        each recipe in recipes 
+          li  
+            a(href=`/recipe/${categoryId}/${recipe.id}`)= recipe.recipe 
+      article 
+        if pagination 
+          ul.pagination 
+            li 
+              a(href=`/category/${categoryId}?page=${pagination.prevPage}` class=`${pagination.prevPage ? '' : 'disabled'}`)  &lt; 
+            each page in pagination.allPages
+              li 
+                a(href=`/category/${categoryId}?page=${page}` class=`${pagination.currentPage === page ? 'current' : ''}`)= page
+            li 
+              a(href=`/category/${categoryId}?page=${pagination.nextPage}` class=`${pagination.nextPage ? '' : 'disabled'}`) &gt; 

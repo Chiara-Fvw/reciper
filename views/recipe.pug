@@ -3,7 +3,7 @@ extends layout
 block backMenu
   .backMenu 
     a(href=`/category/${recipeInfo.category_id}`)= categoryTitle
-    a(href="/recipes/all") all Recipes
+    //- a(href="/recipes/all") all Recipes
 
 block actionMenu
   div.actionMenu
@@ -22,9 +22,12 @@ block main
             p= `Time: ${recipeInfo.prep_time}'`
           .steps 
             h2 Instructions: 
-            ul 
-              each step in recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g) 
-                li= step
+            if (recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g))
+              ul 
+                each step in recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g)
+                  li= step
+            else 
+              p= recipeInfo.steps
         .ingredients 
           h2 Ingredients: 
           ul 

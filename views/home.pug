@@ -2,15 +2,29 @@ extends layout
 
 block backMenu 
   div.backMenu
-    a(href="/recipes/all") all Recipes
+    //- a(href="/recipes/all") all Recipes
 block actionMenu
   div.actionMenu
     a(href="/categories/new") Add a category
     a(href="/recipes/new") Add a Recipe 
 block main 
-  section
-    h1 What do you want to prepare today?
-    ul.resultList   
-      each category in categories 
-        li  
-          a(href=`/category/${category.id}`)= category.category 
+  if (!categories)
+    section
+      p You have no categories yet... Add one now!
+  else
+    section
+      h1 What do you want to prepare today?
+      ul.resultList   
+        each category in categories
+          li  
+            a(href=`/category/${category.id}`)= category.category 
+      article 
+        if pagination 
+          ul.pagination 
+            li 
+              a(href=`/home?page=${pagination.prevPage}` class=`${pagination.prevPage ? '' : 'disabled'}`)  &lt; 
+            each page in pagination.allPages
+              li 
+                a(href=`/home?page=${page}` class=`${pagination.currentPage === page ? 'current' : ''}`)= page
+            li 
+              a(href=`/home?page=${pagination.nextPage}` class=`${pagination.nextPage ? '' : 'disabled'}`) &gt; 
