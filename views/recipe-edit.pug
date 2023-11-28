@@ -22,6 +22,7 @@ block main
             label(for="category") Category:
           dd 
             select(id="category" name="category")
+              option(value=category)  Choose one
               each category in categories 
                 option(value= category.id) #{category.category}
         .formRow
