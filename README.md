@@ -42,3 +42,9 @@ You can also use this file to talk about any design choices or trade-offs you ma
 In the Reciper, the recipes table will not have the `UNIQUE` constraint, in this way the user will be able to edit the content of the recipe without changing the recipe name. However, the user won't be able to create a recipe if the name already exists, in an apptempt to avoid recipe duplication.
 
 Total count to save on queries when paginating results
+
+Before:
+
+"npm run createDb" : will create the database
+"npm run createSchema" : will create the schema
+"npm run insertData": will populate the tables with the seed data.
