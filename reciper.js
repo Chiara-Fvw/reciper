@@ -57,6 +57,33 @@ const requiresAuthentication = (req, res, next) => {
   };
 }
 
+const recipeValidation = () => {
+  return [
+    body("title")
+      .trim()
+      .isLength({ min:1 })
+      .withMessage("Recipes must have a title."),
+    body("serves")
+      .isNumeric()
+      .withMessage('Serves must be numeric')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("There must be at least one serve."),
+    body("prep_time")
+      .isNumeric()
+      .withMessage('Preparation time must be set in number of minutes')
+      .custom(value => parseFloat(value) > 0)
+      .withMessage("Every preparation must take at least one minute."),
+    body("ingredients")
+      .trim()
+      .isLength({ min: 4 })
+      .withMessage("Recipes must have ingredients."),
+    body("steps")
+      .trim()
+      .isLength({ min:4 })
+      .withMessage("Recipes need directions...")
+  ]
+};
+
 // Display Welcome page: The app's name and button signin
 app.get("/", (req, res) => {
   res.render("welcome");
@@ -279,30 +306,7 @@ app.post("/categories/delete/:id", requiresAuthentication, catchError(async(req,
   // Create a recipe
 app.post("/recipes/new", 
   requiresAuthentication,
-  [
-    body("title")
-      .trim()
-      .isLength({ min:1 })
-      .withMessage("Recipes must have a title."),
-    body("serves")
-      .isNumeric()
-      .withMessage('Serves must be numeric')
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("There must be at least one serve."),
-    body("prep_time")
-      .isNumeric()
-      .withMessage('Preparation time must be set in number of minutes')
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("Every preparation must take at least one minute."),
-    body("ingredients")
-      .trim()
-      .isLength({ min: 4 })
-      .withMessage("Recipes must have ingredients."),
-    body("steps")
-      .trim()
-      .isLength({ min:4 })
-      .withMessage("Recipes need directions...")
-  ], 
+  recipeValidation(), 
   catchError(async(req, res) => {
     let categories = await res.locals.store.getCategories();
     let { title, category, serves, prep_time, ingredients, steps } = req.body;
@@ -332,30 +336,7 @@ app.post("/recipes/new",
   // Edit a recipe
 app.post("/recipes/edit/:id", 
   requiresAuthentication,
-  [
-    body("title")
-      .trim()
-      .isLength({ min:1 })
-      .withMessage("Recipes must have a title."),
-    body("serves")
-      .isNumeric()
-      .withMessage('Serves must be numeric')
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("There must be at least one serve."),
-    body("prep_time")
-      .isNumeric()
-      .withMessage('Preparation time must be set in number of minutes')
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("Every preparation must take at least one minute."),
-    body("ingredients")
-      .trim()
-      .isLength({ min: 4 })
-      .withMessage("Recipes must have ingredients."),
-    body("steps")
-      .trim()
-      .isLength({ min:4 })
-      .withMessage("Recipes need directions...")
-  ],
+  recipeValidation(),
   catchError(async(req, res) => {
     let errors = validationResult(req);
     let id = req.params.id;
@@ -371,10 +352,11 @@ app.post("/recipes/edit/:id",
         ingredients,
         steps,
         categories,
+        id,
         flash: req.flash()
       })
     } else {
-      let updated = await res.locals.store.editRecipe(title, +category, serves, prep_time, ingredients, steps, +id);
+      let updated = await res.locals.store.editRecipe(title, +category, serves, prep_time, ingredients, steps, id);
       if (!updated) throw new Error("Not found.");
       req.flash("success", "The recipe has been updated.");
       res.redirect(`/recipe/${category}/${id}`);
