@@ -317,8 +317,7 @@ app.post("/recipes/new",
     let { title, category, serves, prep_time, ingredients, steps } = req.body;
     let errors = validationResult(req);
 
-    if(!errors.isEmpty()) {
-      errors.array().forEach(message => req.flash("error", message.msg));
+    let rerenderRecipe = () => 
       res.render("recipe-new", {
         title,
         category,
@@ -328,7 +327,15 @@ app.post("/recipes/new",
         steps,
         categories,
         flash: req.flash()
-      });
+        }
+      );
+
+    if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      rerenderRecipe();
+    } else if(await res.locals.store.existsRecipe(title)) {
+      req.flash("error", "The recipe already exists.");
+      rerenderRecipe();
     } else {
       let addedRecipe = await res.locals.store.addRecipe(title, category, serves, prep_time, ingredients, steps);
       if(!addedRecipe) throw new Error("Not found.");
