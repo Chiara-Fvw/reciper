@@ -17,7 +17,7 @@ block main
           dt 
             label(for="recipe") Title:
           dd 
-            input(type="text" name="title" placeholder="Title" value=recipe) 
+            input(type="text" name="title" placeholder="Title" value=title) 
         .formRow
           dt 
             label(for="category") Category:
@@ -29,22 +29,22 @@ block main
           dt 
             label(for="serves") Serves:
           dd 
-            input(type="number" name="serves" placeholder="Serves")
+            input(type="number" name="serves" placeholder="Serves" value= serves)
         .formRow
           dt 
             label(for="prep_time") Preparation time (in minutes):
           dd 
-            input(type="number" name="prep_time" placeholder="Minutes")
+            input(type="number" name="prep_time" placeholder="Minutes" value= prep_time)
         .formRow
           dt 
             label(for="ingredients") Ingredients (comma separated):
           dd 
-            textarea(name="ingredients", cols="30", rows="10") 
+            textarea(name="ingredients", cols="30", rows="10") #{ingredients}
         .formRow
           dt 
             label(for="steps") Preparation steps:
           dd 
-            textarea(name="steps", cols="30", rows="10") 
+            textarea(name="steps", cols="30", rows="10") #{steps}
 
       fieldset.formButtons 
         input(type="submit" value="Save")
