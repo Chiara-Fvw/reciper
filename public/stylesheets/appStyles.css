@@ -124,6 +124,10 @@ section {
   align-items: center;
 }
 
+article {
+  padding: 100px 20px;
+}
+
 .usernameStyle {
   font-weight: bold;
 }
@@ -229,7 +233,6 @@ div.formRow dd textarea {
 
 /* Pagination */
 .pagination {
-  margin-top: 50px;
   display: flex;
   gap: 15px;
 }
