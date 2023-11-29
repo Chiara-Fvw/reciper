@@ -61,6 +61,7 @@ const recipeValidation = () => {
   return [
     body("title")
       .trim()
+      .escape()
       .isLength({ min:1 })
       .withMessage("Recipes must have a title."),
     body("serves")
@@ -75,10 +76,12 @@ const recipeValidation = () => {
       .withMessage("Every preparation must take at least one minute."),
     body("ingredients")
       .trim()
+      .escape()
       .isLength({ min: 4 })
       .withMessage("Recipes must have ingredients."),
     body("steps")
       .trim()
+      .escape()
       .isLength({ min:4 })
       .withMessage("Recipes need directions...")
   ]
@@ -228,6 +231,7 @@ app.post("/categories/new",
   [
     body("category")
       .trim()
+      .escape()
       .isLength({ min: 1 })
       .withMessage("The category must have a title.")
   ],
@@ -262,6 +266,7 @@ app.post("/categories/edit/:id",
   [
     body("category")
       .trim()
+      .escape()
       .isLength({ min: 1 })
       .withMessage("The category must have a title.")
   ],
