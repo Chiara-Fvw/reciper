@@ -8,7 +8,7 @@
     "createDb": "createdb reciper",
     "createSchema": "psql -d reciper < schema.sql",
     "insertData": "psql -d reciper < lib/seed-data.sql",
-    "insertUsers": "psql -d reciper < lib/seed-data.sql",
+    "insertUsers": "psql -d reciper < lib/users.sql",
     "startDb": "brew services start postgresql@14",
     "stopDb": "brew services stop postgresql@14",
     "debug": "npx nodemon --inspect reciper.js",

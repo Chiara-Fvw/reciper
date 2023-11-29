@@ -2,7 +2,13 @@ PROJECT NAME AND DESCRIPTION:
   The Reciper is an application used to store recipes within categories. 
 
 INSTALLATION:
-  Install all modules by running `npm install`on your cli.
+Run `npm install` on your cli to install modules.
+CONFIGURATION:
+Run the following command for:
+  `npm run createDb` : will create the database
+  `npm run createSchema` : will create the schema
+  `npm run insertData`: will populate the tables with the seed data.
+  `npm run insertUsers`: will upload the users data.
 
   NODE VERSION: 
     16.17.1
@@ -12,10 +18,6 @@ INSTALLATION:
   POSTGRESQL VERSION:
     14.7
 
-CONFIGURATION:
-  Create a database named reciper and import the schema.sql file to it.
-  Insert the seed data by importing the lib/seed-data.sql file.
-  Although sharing the user login data is an unsecure practice, I am providing a user-data.sql file for examination purposes.
 
 USAGE:
   To start the application use the `npm start`command.
