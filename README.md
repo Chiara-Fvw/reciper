@@ -36,8 +36,5 @@ USAGE:
 
 COMMENTS:
 
-There are some decisions I made that I would like to explain:
-- The database table for recipes does not have an `UNIQUE` constraint on its title column. 
-This is made on purpose so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion, the recipe creation middleware will check if already exists a recipe with that name before creating it.
-
+- The database table for recipes does not have an `UNIQUE` constraint on its title column so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion, the recipe creation middleware will check if already exists a recipe with that name before creating it.
 
