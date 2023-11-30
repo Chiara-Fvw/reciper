@@ -51,6 +51,7 @@ app.use((req, res, next) => {
 //Middleware to test if the user have permission to access specific functionalities and views.
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
+    req.flash("info", "To access the content you must be logged in.");
     res.redirect(302, "/user/signin");
   } else {
     next();
@@ -141,7 +142,7 @@ app.get("/category/:id", requiresAuthentication,
       });
     } else {
       let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages)  throw new Error("Not found.")
+      if (PAGE > pagination.totalPages)  throw new Error("Invalid page number.")
       let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
       res.render("category", {
         recipes,
@@ -223,6 +224,10 @@ app.get("/recipes/edit/:id", requiresAuthentication,
     });
   })
 );
+
+app.get('*', (req, res) => {
+  res.redirect("/");
+});
 
 // Category Settings:
   // Create a new category
