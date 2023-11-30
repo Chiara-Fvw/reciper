@@ -47,14 +47,10 @@ You can also use this file to talk about any design choices or trade-offs you ma
 
 ******
 
-In the Reciper, the recipes table will not have the `UNIQUE` constraint, in this way the user will be able to edit the content of the recipe without changing the recipe name. However, the user won't be able to create a recipe if the name already exists, in an apptempt to avoid recipe duplication.
-
-
-
 COMMENTS:
 
 There are some decisions I made that I would like to explain:
 - The database table for recipes does not have an `UNIQUE` constraint on its title column. 
-This is made on purpose so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion the recipe creation middleware will check if already exists a recipe with that name before creating it.
+This is made on purpose so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion, the recipe creation middleware will check if already exists a recipe with that name before creating it.
 
 
