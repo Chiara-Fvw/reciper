@@ -74,26 +74,27 @@ input[type="submit"],
 }
 
 .flash {
-  background-color: #cbe5f2;
-  color: #3399cc;
-  margin: 20px 0 1.5rem;
-  max-width: 100%;
+  color: #137baf;
+  border-bottom: 1px solid #137baf;
+  max-width: 80%;
+  margin: auto;
   padding: 10px 20px;
+  text-align: center;
 }
 
 .flash p {
+  text-align: center;
   font-size: 14px;
-  font-weight: bold;
 }
 
 .flash.error {
-  background-color: #ffcfbf;
-  color: #ff6633;
+  color: #ef3e1f;
+  border-bottom: 1px solid #ef3e1f;
 }
 
 .flash.success {
-  background-color: #cbf2e5;
-  color: #33cc99;
+  color: #26b65b;
+  border-bottom: 1px solid #26b65b;
 }
 
 section {
@@ -186,6 +187,9 @@ div.formRow dd textarea {
 }
 
 /* Home */
+.resultList li {
+  margin-bottom: 1rem;
+}
 /* Recipe */
 .recipeInfo {
   max-width: 80%;
