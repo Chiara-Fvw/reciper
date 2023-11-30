@@ -66,27 +66,27 @@ const recipeValidation = () => {
       .isLength({ min:1 })
       .withMessage("Recipes must have a title."),
     body("serves")
-      .isNumeric()
-      .withMessage('Serves must be numeric')
       .custom(value => parseFloat(value) > 0)
       .withMessage("There must be at least one serve."),
     body("prep_time")
-      .isNumeric()
-      .withMessage('Preparation time must be set in number of minutes')
       .custom(value => parseFloat(value) > 0)
       .withMessage("Every preparation must take at least one minute."),
     body("ingredients")
       .trim()
       .escape()
-      .isLength({ min: 4 })
+      .isLength({ min: 3 })
       .withMessage("Recipes must have ingredients."),
     body("steps")
       .trim()
       .escape()
-      .isLength({ min:4 })
+      .isLength({ min:3 })
       .withMessage("Recipes need directions...")
   ]
 };
+
+app.locals.isSelected = (option, category) => {
+  return +option === +category ? true : false;
+}
 
 // Display Welcome page: The app's name and button signin
 app.get("/", (req, res) => {
@@ -111,7 +111,7 @@ app.get("/home",
       res.render("home");
     } else {
       let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages) throw new Error("Not found.")
+      if (PAGE > pagination.totalPages) throw new Error("Invalid page number.")
       
       let categories = await res.locals.store.getPaginatedCategories(LIMIT, OFFSET);
       if(!categories) throw new Error("Not found.");
@@ -127,20 +127,19 @@ app.get("/home",
 // Open the category page that shows all the recipes of that category (with pagination)
 app.get("/category/:id", requiresAuthentication, 
   catchError(async(req, res) => {
-    const PAGE = parseInt(req.query.page) || 1;
-    const LIMIT = 2;
-    const OFFSET = (PAGE - 1) * LIMIT;
-
     let categoryId = req.params.id;
     let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
     if(!categoryTitle) throw new Error("Not found.");
-    let count = await res.locals.store.recipesCount(categoryId);
+    let count = await res.locals.store.recipesCount(+categoryId);
     if (count === '0') {
       res.render("category", {
         categoryTitle,
         categoryId
       });
     } else {
+      const PAGE = parseInt(req.query.page) || 1;
+      const LIMIT = 3;
+      const OFFSET = (PAGE - 1) * LIMIT;
       let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
       if (PAGE > pagination.totalPages)  throw new Error("Invalid page number.")
       let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
@@ -155,19 +154,13 @@ app.get("/category/:id", requiresAuthentication,
 );
 
 //Display the recipe view
-app.get("/recipe/:category/:id", requiresAuthentication,
+app.get("/recipe/:id", requiresAuthentication,
   catchError(async(req, res) => {
     let id = req.params.id;
-    let category = req.params.category;
-
-    let categoryTitle = await res.locals.store.getCategoryTitle(+category);
-    if(!categoryTitle) throw new Error("Not found.");
-
     let recipeInfo = await res.locals.store.getRecipe(+id);
     if(!recipeInfo) throw new Error("Not found.");
     res.render("recipe", {
       recipeInfo,
-      categoryTitle
     });
   })
 );
@@ -350,6 +343,7 @@ app.post("/recipes/new",
     }
   })
 );
+
   // Edit a recipe
 app.post("/recipes/edit/:id", 
   requiresAuthentication,
@@ -376,10 +370,11 @@ app.post("/recipes/edit/:id",
       let updated = await res.locals.store.editRecipe(title, +category, serves, prep_time, ingredients, steps, id);
       if (!updated) throw new Error("Not found.");
       req.flash("success", "The recipe has been updated.");
-      res.redirect(`/recipe/${category}/${id}`);
+      res.redirect(`/recipe/${id}`);
     };
   })
 );
+
   // Delete a recipe
 app.post("/recipes/delete/:id", requiresAuthentication, 
   catchError(async(req, res) => {

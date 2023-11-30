@@ -22,9 +22,9 @@ block main
             label(for="category") Category:
           dd 
             select(id="category" name="category")
-              option(value=category)= categories.find(cat => cat.id === category).category
-              each category in categories 
-                option(value= category.id) #{category.category}
+              each option in categories 
+                option(value= option.id selected=isSelected(option.id,category)) #{option.category}
+                
         .formRow
           dt 
             label(for="serves") Serves:

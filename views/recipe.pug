@@ -2,8 +2,7 @@ extends layout
 
 block backMenu
   .backMenu 
-    a(href=`/category/${recipeInfo.category_id}`)= categoryTitle
-    //- a(href="/recipes/all") all Recipes
+    a(href=`/category/${recipeInfo.category_id}`)= recipeInfo.category
 
 block actionMenu
   div.actionMenu

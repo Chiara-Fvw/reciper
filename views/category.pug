@@ -24,7 +24,7 @@ block main
       ul.resultList   
         each recipe in recipes 
           li  
-            a(href=`/recipe/${categoryId}/${recipe.id}`)= recipe.recipe 
+            a(href=`/recipe/${recipe.id}`)= recipe.recipe 
       article 
         if pagination 
           ul.pagination 
