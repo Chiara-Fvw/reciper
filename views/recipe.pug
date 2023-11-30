@@ -22,12 +22,9 @@ block main
             p= `Time: ${recipeInfo.prep_time}'`
           .steps 
             h2 Instructions: 
-            if (recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g))
-              ul 
-                each step in recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]\)?/g)
-                  li= step
-            else 
-              p= recipeInfo.steps
+            ul 
+              each step in recipeInfo.steps.match(/\(?[^\.\?\!]+[\.!\?]?(\s*\))?/g)
+                li= step
         .ingredients 
           h2 Ingredients: 
           ul 
