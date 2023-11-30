@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//Extract session info and store it on res.locals. We also store flash messages although is an exception because to pass data to views is better use app.locals.
+//Extract session info and store it on res.locals. We also store flash messages although is an exception because pass data to views is better to use app.locals.
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
@@ -109,7 +109,7 @@ app.get("/home",
     if (count === '0') {
       res.render("home");
     } else {
-      let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
+      let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
       if (PAGE > pagination.totalPages) throw new Error("Not found.")
       
       let categories = await res.locals.store.getPaginatedCategories(LIMIT, OFFSET);
@@ -313,9 +313,9 @@ app.post("/recipes/new",
   requiresAuthentication,
   recipeValidation(), 
   catchError(async(req, res) => {
+    let errors = validationResult(req);
     let categories = await res.locals.store.getCategories();
     let { title, category, serves, prep_time, ingredients, steps } = req.body;
-    let errors = validationResult(req);
 
     let rerenderRecipe = () => 
       res.render("recipe-new", {
