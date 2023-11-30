@@ -22,34 +22,6 @@ p {
   margin-bottom: 0.5em;
 }
 
-input[type="submit"],
-.button {
-  display: inline-block;
-  appearance: none;
-  background-color: transparent;
-  border-radius: 0.6em;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 400;
-  margin: 20px;
-  padding: 1.2em 2.8em;
-  text-decoration: none;
-  text-align: center;
-  text-transform: uppercase;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  border-color: lightblue;
-  color: #fff;
-  box-shadow: 0 0 40px 40px lightblue inset, 0 0 0 0 lightblue;
-  transition: all 150ms ease-in-out;
-}
-.button:hover,
-.button:focus {
-  color: inherit;
-  outline: 0;
-  box-shadow: 0 0 10px 0 lightblue inset, 0 0 10px 4px lightblue;
-}
-
 #topbar {
   display: flex;
   flex-direction: row;
@@ -69,23 +41,31 @@ input[type="submit"],
   gap: 15px;
 }
 
+fieldset.formButtons {
+  text-align: center;
+  padding: 20px 0;
+}
+
+input[type="submit"],
+.button {
+  display: inline-block;
+  appearance: none;
+  background-color: transparent;
+  border: solid 1px lightblue;
+  padding: 10px 15px;
+  border-radius: 0.6em;
+  font: inherit;
+  cursor: pointer;
+}
+
 .userInfo p, .userInfo form {
   text-align: center;
 }
 
 .userInfo form button {
-  all: initial;
   font-family: inherit;
-  box-shadow: inset 0 0 0 0 lightblue;
-  color: lightblue;
   margin: 0 -.25rem;
   padding: 0 .25rem;
-  transition: color .3s ease-in-out, box-shadow .3s ease-in-out;
-}
-
-.userInfo form button:hover {
-  box-shadow: inset 100px 0 0 0 lightblue;
-  color: white;
 }
 
 .flashContainer {
@@ -125,7 +105,7 @@ section {
 }
 
 article {
-  padding: 100px 20px;
+  padding: 50px 20px;
 }
 
 .usernameStyle {
@@ -162,6 +142,7 @@ nav.menu .actionMenu a, nav.menu form.delete button {
   border-radius: 0.6em;
   cursor: pointer;
 }
+
 /* Welcome Page */
 .welcome h1 {
   font-size: 32px;
