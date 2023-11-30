@@ -1,5 +1,5 @@
 PROJECT NAME AND DESCRIPTION:
- Reciper is just a collection of recipes that are organized within categories.
+  Reciper is just a collection of recipes that are organized within categories.
 
   Categories and recipes can be added, edited and deleted.
   All the data will be displayed by its name's alphabetical order.
@@ -7,14 +7,14 @@ PROJECT NAME AND DESCRIPTION:
  
 
 INSTALLATION:
-Run `npm install` on your cli to install modules.
+  Run `npm install` on your cli to install modules.
 
 CONFIGURATION:
-Run the following command for:
-  `npm run createDb` : will create the database
-  `npm run createSchema` : will create the schema
-  `npm run insertData`: will populate the tables with the seed data.
-  `npm run insertUsers`: will upload the users data.
+  Run the following command for:
+    `npm run createDb` : will create the database
+    `npm run createSchema` : will create the schema
+    `npm run insertData`: will populate the tables with the seed data.
+    `npm run insertUsers`: will upload the users data.
 
 NODE VERSION: 
   16.17.1
@@ -24,25 +24,12 @@ BROWSER USED - VERSION:
 POSTGRESQL VERSION:
   14.7
 
-
 USAGE:
   To start the application use the `npm start`command.
   
   The app will run on port 3000 of your localhost.
   The user that has seed data is:
     Admin: admin / secret
-
-
-
-
-*How to install, configure, and run the application.
-*Any additional details the grader may need to run your code.
-*Keep in mind that your grader may be unfamiliar with the problem domain. If you think that's a possibility, you may wish to add a brief discussion of the vocabulary and concepts used in the application.
-
-Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. 
-
-You can also use this file to talk about any design choices or trade-offs you made. 
-
 
 
 ******
