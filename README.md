@@ -54,14 +54,6 @@ Do not rely exclusively on HTML validation or JavaScript validation that execute
 
 If an input error is detected, the page should be redisplayed with an appropriate flash message.
 
-
-
-The application must require login authentication for all operations, even when just viewing the data. 
-Suppose a user enters a URL for a page without first logging in. In that case, you should first require authentication, then proceed to the requested page. 
-
-  *********For instance, if a user who isn't logged in requests the URL of http://localhost:5000/collections/7/items/4/, your app should first ask the user to login. Once the user logs in successfully, the app should proceed directly to the requested page.**********
-
-
 Other Requirements and Guidelines
 
 Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. 
