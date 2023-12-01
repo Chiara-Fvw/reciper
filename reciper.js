@@ -51,6 +51,7 @@ app.use((req, res, next) => {
 //Middleware to test if the user have permission to access specific functionalities and views.
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
+    req.session.requestedUrl = req.path;
     req.flash("info", "To access the content you must be logged in.");
     res.redirect(302, "/user/signin");
   } else {
@@ -402,8 +403,9 @@ app.post("/user/signin", catchError(async(req, res) => {
   } else {
     req.session.username = username;
     req.session.signedIn = true;
+    const goTo = req.session.requestedUrl || "/home";
     req.flash("info", `Welcome ${username}!`);
-    res.redirect("/home");
+    res.redirect(goTo);
   }
 })
 );
