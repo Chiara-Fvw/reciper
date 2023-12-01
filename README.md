@@ -62,3 +62,12 @@ You can also use this file to talk about any design choices or trade-offs you ma
 
 
 Use your judgment for specifications that we haven't mentioned explicitly. Your assumptions should not conflict with the explicit requirements. Please note your assumptions and decisions in the README.md file.
+
+ASSUMPTIONS:
+
+The application will use a postgre database to store the application data and express-session in order to persist user-specific data. Express-validator will be used to validate and sanitize user provided data.
+If a user make some error, it will be noticed through flash messages supported by express-flash. If the error is from database or incorrect url, the user will be redirected to an error dedicated page that will inform that an error has occurred and gives the user the possibility to go back to the home.
+
+As the application will be listing categories and recipes, both will be displayed with pagination, to this purpose there is a common `getPaginationResult` method that will provide the data for the pagination commands and a dedicated method (`getPaginatedCategories` and `getPaginatedRecipes`) to retrieve the data by using `LIMIT` AND `OFFSET` in the respective queries.
+
+
