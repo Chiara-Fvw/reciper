@@ -103,14 +103,13 @@ app.get("/user/signin", (req, res) => {
 app.get("/home", 
   requiresAuthentication,
   catchError(async (req, res) => {
-    const PAGE = parseInt(req.query.page) || 1;
-    const LIMIT = 5;
-    const OFFSET = (PAGE - 1) * LIMIT;
-
     let count = await res.locals.store.categoriesCount();
     if (count === '0') {
       res.render("home");
     } else {
+      const PAGE = parseInt(req.query.page) || 1;
+      const LIMIT = 5;
+      const OFFSET = (PAGE - 1) * LIMIT;
       let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
       if (PAGE > pagination.totalPages) throw new Error("Invalid page number.")
       
@@ -246,7 +245,7 @@ app.post("/categories/new",
     }
 
     if(!errors.isEmpty()) {
-      req.flash("error", errors[0].msg);
+      req.flash("error", errors.errors[0].msg);
       rerenderCategory();
     } else if (await res.locals.store.existsCategory(category)) {
       req.flash("error", "The category already exists.");
@@ -283,7 +282,7 @@ app.post("/categories/edit/:id",
     }
 
     if(!errors.isEmpty()) {
-      req.flash("error", errors[0].msg);
+      req.flash("error", errors.errors[0].msg);
       rerenderCategory();
     } else if (await res.locals.store.existsCategory(category)) {
       req.flash("error", "This category already exists.");
@@ -420,7 +419,9 @@ app.post("/user/signout", (req, res) => {
 //Error handler
 app.use((err, req, res, _next) => {
   console.log(err);
-  res.status(404).render("error", {error: err.message});
+  res.status(404).render("error", {
+    error: err.message,
+  });
 });
 
 //Listener
