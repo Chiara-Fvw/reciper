@@ -17,7 +17,7 @@ app.set("view engine", "pug");
 
 app.use(express.static("public"));
 app.use(morgan("common"));
-app.use(session({ //a session is a way to store information about a user across multiple requests.
+app.use(session({
   cookie: {
     httpOnly: true,
     maxAge: 31 * 24 * 60 * 60 * 1000,
@@ -57,7 +57,13 @@ const requiresAuthentication = (req, res, next) => {
   } else {
     next();
   };
-}
+};
+
+const validateId = (req, res, next) => {
+  let param = req.params.id;
+  if (isNaN(+param)) next(new Error("Invalid parameter."));
+  next();
+};
 
 const recipeValidation = () => {
   return [
@@ -82,12 +88,12 @@ const recipeValidation = () => {
       .escape()
       .isLength({ min:3 })
       .withMessage("Recipes need directions...")
-  ]
+  ];
 };
 
 app.locals.isSelected = (option, category) => {
   return +option === +category ? true : false;
-}
+};
 
 // Display Welcome page: The app's name and button signin
 app.get("/", (req, res) => {
@@ -97,7 +103,7 @@ app.get("/", (req, res) => {
 //Display sign-in form:
 app.get("/user/signin", (req, res) => {
   res.render("signin");
-})
+});
 
 // Display the Home page: user's recipe book displaying categories (pagination)
 app.get("/home", 
@@ -125,7 +131,7 @@ app.get("/home",
 );
 
 // Open the category page that shows all the recipes of that category (with pagination)
-app.get("/category/:id", requiresAuthentication, 
+app.get("/category/:id", validateId, requiresAuthentication, 
   catchError(async(req, res) => {
     let categoryId = req.params.id;
     let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);
@@ -154,7 +160,7 @@ app.get("/category/:id", requiresAuthentication,
 );
 
 //Display the recipe view
-app.get("/recipe/:id", requiresAuthentication,
+app.get("/recipe/:id", validateId, requiresAuthentication,
   catchError(async(req, res) => {
     let id = req.params.id;
     let recipeInfo = await res.locals.store.getRecipe(+id);
@@ -185,6 +191,7 @@ app.get("/recipes/new", requiresAuthentication,
 //Open edit form:
   // For category
 app.get("/categories/edit/:id", 
+  validateId,
   requiresAuthentication,
   catchError(async(req, res) => {
     let id = req.params.id;
@@ -198,7 +205,9 @@ app.get("/categories/edit/:id",
   }) 
 );
   // For recipe
-app.get("/recipes/edit/:id", requiresAuthentication, 
+app.get("/recipes/edit/:id", 
+  validateId,
+  requiresAuthentication, 
   catchError(async(req,res) => {
     let id = req.params.id;
     let recipe = await res.locals.store.getRecipe(+id);
@@ -260,6 +269,7 @@ app.post("/categories/new",
 );
   // Edit a category
 app.post("/categories/edit/:id", 
+  validateId,
   requiresAuthentication,
   [
     body("category")
@@ -295,14 +305,18 @@ app.post("/categories/edit/:id",
     }
   }) 
 );
+
   // Delete a category
-app.post("/categories/delete/:id", requiresAuthentication, catchError(async(req, res) => {
-  let id = req.params.id;
-  let deleted = await res.locals.store.deleteCategory(+id);
-  if(!deleted) throw new Error("Not found.");
-  req.flash("success", "The category has been deleted.");
-  res.redirect(`/home`);
-})
+app.post("/categories/delete/:id", 
+  validateId,
+  requiresAuthentication, 
+    catchError(async(req, res) => {
+    let id = req.params.id;
+    let deleted = await res.locals.store.deleteCategory(+id);
+    if(!deleted) throw new Error("Not found.");
+    req.flash("success", "The category has been deleted.");
+    res.redirect(`/home`);
+  })
 );
 
 //Recipe settings:
@@ -340,12 +354,13 @@ app.post("/recipes/new",
 
       req.flash("success", "The new recipe has been added to your book!");
       res.redirect(`/category/${category}`);
-    }
+    };
   })
 );
 
   // Edit a recipe
 app.post("/recipes/edit/:id", 
+  validateId,
   requiresAuthentication,
   recipeValidation(),
   catchError(async(req, res) => {
@@ -376,7 +391,9 @@ app.post("/recipes/edit/:id",
 );
 
   // Delete a recipe
-app.post("/recipes/delete/:id", requiresAuthentication, 
+app.post("/recipes/delete/:id", 
+  validateId,
+  requiresAuthentication, 
   catchError(async(req, res) => {
     let id = req.params.id;
     let deleted = await res.locals.store.deleteRecipe(+id);
@@ -405,7 +422,7 @@ app.post("/user/signin", catchError(async(req, res) => {
     const goTo = req.session.requestedUrl || "/home";
     req.flash("info", `Welcome ${username}!`);
     res.redirect(goTo);
-  }
+  };
 })
 );
 
