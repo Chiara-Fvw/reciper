@@ -39,16 +39,16 @@ app.use((req, res, next) => {
   next();
 });
 
-//Extract session info and store it on res.locals. We also store flash messages although is an exception because pass data to views is better to use app.locals.
+//Extract session info and flash messages.
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
-  delete req.session.flash; //Delete after saving otherwise the message won't never go away.
+  delete req.session.flash;
   next();
 });
 
-//Middleware to test if the user have permission to access specific functionalities and views.
+//Chek if the user is authenticated
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
     req.session.requestedUrl = req.path;
@@ -59,12 +59,14 @@ const requiresAuthentication = (req, res, next) => {
   };
 };
 
+//validates the id route parameter
 const validateId = (req, res, next) => {
   let param = req.params.id;
   if (isNaN(+param)) next(new Error("Invalid parameter."));
   next();
 };
 
+//Validate the recipe inputs.
 const recipeValidation = () => {
   return [
     body("title")
@@ -91,21 +93,22 @@ const recipeValidation = () => {
   ];
 };
 
+//View helper to automatically preselect an option in a dropdown input that has already been chosen, whether when editing an existing recipe or creating a new one.
 app.locals.isSelected = (option, category) => {
   return +option === +category ? true : false;
 };
 
-// Display Welcome page: The app's name and button signin
+// Render Welcome page.
 app.get("/", (req, res) => {
   res.render("welcome");
 });
 
-//Display sign-in form:
+//Render sign-in form:
 app.get("/user/signin", (req, res) => {
   res.render("signin");
 });
 
-// Display the Home page: user's recipe book displaying categories (pagination)
+// Render the Home page: user's categories paginated by 5 items.
 app.get("/home", 
   requiresAuthentication,
   catchError(async (req, res) => {
@@ -116,21 +119,21 @@ app.get("/home",
       const PAGE = parseInt(req.query.page) || 1;
       const LIMIT = 5;
       const OFFSET = (PAGE - 1) * LIMIT;
-      let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages) throw new Error("Invalid page number.")
-      
+      let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);      
       let categories = await res.locals.store.getPaginatedCategories(LIMIT, OFFSET);
+      if (PAGE > pagination.totalPages) req.flash("error", "Invalid page number.");
       if(!categories) throw new Error("Not found.");
       
       res.render("home", {
         categories,
-        pagination
+        pagination,
+        flash: req.flash()
       });
     };
   })
 );
 
-// Open the category page that shows all the recipes of that category (with pagination)
+// Open the category page that shows all the recipes of that category. Recipes must be paginated.
 app.get("/category/:id", validateId, requiresAuthentication, 
   catchError(async(req, res) => {
     let categoryId = req.params.id;
@@ -144,16 +147,17 @@ app.get("/category/:id", validateId, requiresAuthentication,
       });
     } else {
       const PAGE = parseInt(req.query.page) || 1;
-      const LIMIT = 3;
+      const LIMIT = 5;
       const OFFSET = (PAGE - 1) * LIMIT;
       let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
-      if (PAGE > pagination.totalPages)  throw new Error("Invalid page number.")
       let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
+      if (PAGE > pagination.totalPages)  req.flash("error", "Invalid page number.");
       res.render("category", {
         recipes,
         categoryTitle,
         categoryId,
-        pagination
+        pagination,
+        flash: req.flash(),
       });
     };
   })
@@ -227,8 +231,9 @@ app.get("/recipes/edit/:id",
   })
 );
 
+//If the user insert any invalid path, will be redirected to home.
 app.get('*', (req, res) => {
-  res.redirect("/");
+  res.redirect("/home");
 });
 
 // Category Settings:
@@ -380,7 +385,7 @@ app.post("/recipes/edit/:id",
         categories,
         id,
         flash: req.flash()
-      })
+      });
     } else {
       let updated = await res.locals.store.editRecipe(title, +category, serves, prep_time, ingredients, steps, id);
       if (!updated) throw new Error("Not found.");
@@ -403,7 +408,7 @@ app.post("/recipes/delete/:id",
   })
 );
 
-//Handle sign in
+//Handle user sign in
 app.post("/user/signin", catchError(async(req, res) => {
   let username = req.body.username.trim();
   let password = req.body.password;
@@ -426,7 +431,7 @@ app.post("/user/signin", catchError(async(req, res) => {
 })
 );
 
-//Handle sing out
+//Handle user sing out
 app.post("/user/signout", (req, res) => {
   delete req.session.username;
   delete req.session.signedIn;
