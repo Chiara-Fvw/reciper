@@ -149,7 +149,7 @@ app.get("/category/:id", validateId, requiresAuthentication,
       const PAGE = parseInt(req.query.page) || 1;
       const LIMIT = 5;
       const OFFSET = (PAGE - 1) * LIMIT;
-      let pagination = await res.locals.store.getPaginationResult(count, PAGE, LIMIT);
+      let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
       let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
       if (PAGE > pagination.totalPages)  req.flash("error", "Invalid page number.");
       res.render("category", {
@@ -427,6 +427,7 @@ app.post("/user/signin", catchError(async(req, res) => {
     const goTo = req.session.requestedUrl || "/home";
     req.flash("info", `Welcome ${username}!`);
     res.redirect(goTo);
+    delete req.session.requestedUrl;
   };
 })
 );

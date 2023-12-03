@@ -6,11 +6,14 @@ block backMenu
 block actionMenu
   div.actionMenu
     a(href="/categories/new") Add a category
-    a(href="/recipes/new") Add a Recipe 
+    if (!categories)
+    else
+      a(href="/recipes/new") Add a Recipe 
 block main 
   if (!categories)
     section
       p You have no categories yet... Add one now!
+      a.button(href="/categories/new") Add a category
   else
     section
       h1 What do you want to prepare today?

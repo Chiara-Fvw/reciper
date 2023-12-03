@@ -34,7 +34,7 @@ USAGE:
 
 ******
 
-COMMENTS AND ASSUMPTIONS:
+EXTRA COMMENTS:
 
 The application will use a postgre database to store the application data and express-session in order to persist user-specific data. Express-validator will be used to validate and sanitize user provided data.
 If a user make some error, it will be noticed through flash messages supported by express-flash. If the error is from database or incorrect url, the user will be redirected to an error dedicated page that will inform that an error has occurred and gives the user the possibility to go back to the application home.
@@ -43,14 +43,14 @@ As the application will be listing categories and recipes, both will be displaye
 
 User can display, create, modify and delete any recipe or category, but must be authenticated.
 
-- I aimed to empower users with the ability to modify a recipe's category. Since recipes are inherently tied to categories (each recipe must belong to a category, and the category must already exist), I decided to employ a select input. This approach ensures that users can only choose a category from the pre-existing ones.
+- I aimed to empower users with the ability to modify a recipe's category. Since recipes are inherently tied to categories (each recipe must belong to a category, and the category must already exist), I decided to employ a select input. This approach ensures that users can only choose a category from the pre-existing ones. If a user has no categories created, the "add a recipe" button in the home page will not be displayed.
 In the context of editing a recipe or encountering validation errors during recipe creation, I wanted the recipe's category to be preselected by default. To implement this, I introduced a view helper called `isSelected`, specifically designed for use in the `recipe-new` and `recipe-edit` views. This helper assists in automatically selecting the appropriate category, enhancing the user experience when interacting with the recipe management system.
 
 - The database table for recipes does not have an `UNIQUE` constraint on its title column so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion, the recipe creation middleware will check if already exists a recipe with that name before creating it.
 
 
 
-Query optimization:
+About queries:
 I chose to make pagination using LIMIT/OFFSET because the reciper is not thought to have thousands of recipes and therefore this approach will be fast enough for its purpose.
 
-When rendering the category view that included all the recipes for that category, I needed to retrieve the category title, the total count of results and the paginated recipes. Those where three different queries that I chose to unify in a JOIN query.
+When rendering the category view that included all the recipes for that category, I need to retrieve the category title, the total count of results and the paginated recipes. I could have made a unique query joining tables and counting the total results like "SELECT recipes.*, COUNT(*) OVER () AS total_count, category FROM recipes JOIN categories ON category_id = categories.id WHERE category_id = $1 AND recipes.username = $2 ORDER BY LOWER(recipe) LIMIT $3 OFFSET $4" but that would not have let me follow the data disposition I had in mind: If the category is not available, then an error is thrown, however, it may happen that a category exists but doesn't have recipes on it yet. In this case, I still want to render the page and give the user the option to create a recipe.
