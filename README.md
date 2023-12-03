@@ -58,4 +58,4 @@ When rendering the category view, which includes all the recipes for that catego
   ORDER BY LOWER(recipe)
   LIMIT $3 OFFSET $4`
 
-However, I think that having first check if there is data at all, will avoid to run a more complex query 
+However, this approach would not have allowed me to follow the data structure I had in mind. Specifically, if the category is not available, I want to throw an error. On the other hand, it's possible that a category exists but doesn't have any recipes yet. In this case, I still want to render the page and give the user the option to create a recipe.
