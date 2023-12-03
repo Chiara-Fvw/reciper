@@ -134,7 +134,9 @@ app.get("/home",
 );
 
 // Open the category page that shows all the recipes of that category. Recipes must be paginated.
-app.get("/category/:id", validateId, requiresAuthentication, 
+app.get("/category/:id", 
+  validateId, 
+  requiresAuthentication, 
   catchError(async(req, res) => {
     let categoryId = req.params.id;
     let categoryTitle = await res.locals.store.getCategoryTitle(+categoryId);

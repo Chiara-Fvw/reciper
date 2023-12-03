@@ -1,4 +1,4 @@
-PROJECT NAME AND DESCRIPTION:
+1. # PROJECT NAME AND DESCRIPTION:
   Reciper is just a collection of recipes that are organized within categories.
 
   Categories and recipes can be added, edited and deleted.
@@ -6,25 +6,25 @@ PROJECT NAME AND DESCRIPTION:
   In order to view any data or make any action, the user must be authenticated.
  
 
-INSTALLATION:
+2. # INSTALLATION:
   Run `npm install` on your cli to install modules.
 
-CONFIGURATION:
-  Run the following command for:
+3. # CONFIGURATION:
+  Run the following commands for:
     `npm run createDb` : will create the database
     `npm run createSchema` : will create the schema
     `npm run insertData`: will populate the tables with the seed data.
     `npm run insertUsers`: will upload the users data.
 
-NODE VERSION: 
-  16.17.1
-BROWSER USED - VERSION: 
-  Safari - 17.1
-  Chrome - 119.0.6045.159 
-POSTGRESQL VERSION:
-  14.7
+  NODE VERSION:
+    16.17.1
+  BROWSER USED - VERSION: 
+    Safari - 17.1
+    Chrome - 119.0.6045.159 
+  POSTGRESQL VERSION:
+    14.7
 
-USAGE:
+4. # RUN THE APPLICATION:
   To start the application use the `npm start`command.
   
   The app will run on port 3000 of your localhost.
@@ -32,25 +32,30 @@ USAGE:
     Admin: admin / secret
 
 
-******
+5. # COMMENTS:
 
-EXTRA COMMENTS:
+**Database and Sessions:**
+The application utilizes a PostgreSQL database to store application data and express-session for persisting user-specific information. express-validator is employed to validate and sanitize user-provided data. In the case of user errors, flash messages supported by express-flash notify the user. For database or incorrect URL errors, users are redirected to a dedicated error page, which informs them of the issue and provides the option to return to the application home.
 
-The application will use a postgre database to store the application data and express-session in order to persist user-specific data. Express-validator will be used to validate and sanitize user provided data.
-If a user make some error, it will be noticed through flash messages supported by express-flash. If the error is from database or incorrect url, the user will be redirected to an error dedicated page that will inform that an error has occurred and gives the user the possibility to go back to the application home.
+**Pagination:**
+The application lists categories and recipes with pagination. A common `getPaginationResult` method provides pagination data, and dedicated methods (`getPaginatedCategories` and `getPaginatedRecipes`) retrieve data using `LIMIT` and `OFFSET` in the respective queries. If a user manually inputs a non-numeric page number, it defaults to `1`. Incorrect page numbers trigger a flash message for the user.
 
-As the application will be listing categories and recipes, both will be displayed with pagination, to this purpose there is a common `getPaginationResult` method that will provide the data for the pagination commands and a dedicated method (`getPaginatedCategories` and `getPaginatedRecipes`) to retrieve the data by using `LIMIT` AND `OFFSET` in the respective queries. If the user is providing the page number manually and it is not a number, the page will be set in 1. If the given page number is not correct, the user will get a flash message indicating so.
+**Recipe Category Management:**
+Users can display, create, modify, and delete recipes and categories but must be authenticated. To empower users to modify a recipe's category, a select input is used. This ensures users can only choose from pre-existing categories. If a user has no categories, the "add a recipe" button won't display. Editing a recipe or encountering validation errors during recipe creation preselects the recipe's category by default. A view helper, `isSelected`, assists in automatically selecting the appropriate category, enhancing the user experience.
 
-User can display, create, modify and delete any recipe or category, but must be authenticated.
+**Recipe Title Uniqueness:**
+The recipes table lacks a UNIQUE constraint on the title column, allowing modifications without altering the recipe name. To prevent confusion, the recipe creation middleware checks for an existing recipe with the same name before creating it.
 
-- I aimed to empower users with the ability to modify a recipe's category. Since recipes are inherently tied to categories (each recipe must belong to a category, and the category must already exist), I decided to employ a select input. This approach ensures that users can only choose a category from the pre-existing ones. If a user has no categories created, the "add a recipe" button in the home page will not be displayed.
-In the context of editing a recipe or encountering validation errors during recipe creation, I wanted the recipe's category to be preselected by default. To implement this, I introduced a view helper called `isSelected`, specifically designed for use in the `recipe-new` and `recipe-edit` views. This helper assists in automatically selecting the appropriate category, enhancing the user experience when interacting with the recipe management system.
+**About queries**:
+I opted for using LIMIT/OFFSET for pagination because I expect the recipe database not to have an excessively large number of recipes. This approach should be fast enough for its intended purpose.
 
-- The database table for recipes does not have an `UNIQUE` constraint on its title column so the recipe details can be modified without having to alter the recipe name. However, as having two recipes with the same name could bring some confusion, the recipe creation middleware will check if already exists a recipe with that name before creating it.
+When rendering the category view, which includes all the recipes for that category, I need to retrieve the category title, the total count of results and the paginated recipes. I could have used a single query that joins tables and counts the total results, like the following:
 
+`SELECT recipes.*, COUNT(*) OVER () AS total_count, category
+  FROM recipes
+  JOIN categories ON category_id = categories.id
+  WHERE category_id = $1 AND recipes.username = $2
+  ORDER BY LOWER(recipe)
+  LIMIT $3 OFFSET $4`
 
-
-About queries:
-I chose to make pagination using LIMIT/OFFSET because the reciper is not thought to have thousands of recipes and therefore this approach will be fast enough for its purpose.
-
-When rendering the category view that included all the recipes for that category, I need to retrieve the category title, the total count of results and the paginated recipes. I could have made a unique query joining tables and counting the total results like "SELECT recipes.*, COUNT(*) OVER () AS total_count, category FROM recipes JOIN categories ON category_id = categories.id WHERE category_id = $1 AND recipes.username = $2 ORDER BY LOWER(recipe) LIMIT $3 OFFSET $4" but that would not have let me follow the data disposition I had in mind: If the category is not available, then an error is thrown, however, it may happen that a category exists but doesn't have recipes on it yet. In this case, I still want to render the page and give the user the option to create a recipe.
+However, I think that having first check if there is data at all, will avoid to run a more complex query 
