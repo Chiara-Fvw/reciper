@@ -58,4 +58,8 @@ When rendering the category view, which includes all the recipes for that catego
   ORDER BY LOWER(recipe)
   LIMIT $3 OFFSET $4`
 
-However, this approach would not have allowed me to follow the data structure I had in mind. Specifically, if the category is not available, I want to throw an error. On the other hand, it's possible that a category exists but doesn't have any recipes yet. In this case, I still want to render the page and give the user the option to create a recipe.
+In my design, using a single query with joins and counting wouldn't have allowed me to achieve the specific data structure I envisioned. Here's why:
+
+- If a category is not available, I want to throw an error. This ensures that the system communicates the issue clearly to the user.
+- When the user manually chooses a page for pagination and sets an invalid page number, I prefer to handle this scenario differently. Instead of throwing an error, I want to display a friendly flash message, maintaining a smooth user experience.
+- Additionally, I considered cases where a category exists but doesn't have any recipes yet. In such situations, my goal is to still render the page, displaying the category title, and offering the user the option to create a recipe.
