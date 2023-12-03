@@ -40,8 +40,12 @@ The application utilizes a PostgreSQL database to store application data and exp
 **Pagination:**
 The application lists categories and recipes with pagination. A common `getPaginationResult` method provides pagination data, and dedicated methods (`getPaginatedCategories` and `getPaginatedRecipes`) retrieve data using `LIMIT` and `OFFSET` in the respective queries. If a user manually inputs a non-numeric page number, it defaults to `1`. Incorrect page numbers trigger a flash message for the user.
 
-**Recipe Category Management:**
-Users can display, create, modify, and delete recipes and categories but must be authenticated. To empower users to modify a recipe's category, a select input is used. This ensures users can only choose from pre-existing categories. If a user has no categories, the "add a recipe" button won't display. Editing a recipe or encountering validation errors during recipe creation preselects the recipe's category by default. A view helper, `isSelected`, assists in automatically selecting the appropriate category, enhancing the user experience.
+**Recipe and Category Management:**
+Authenticated users have the ability to view, create, edit, and delete recipes and categories. To make it easy for users to change a recipe's category, there is a dropdown menu that only includes existing categories. If a user doesn't have any categories yet, the "add a recipe" button won't show up.
+
+When editing a recipe or dealing with errors while creating one, the data the user already entered is shown. This helps users avoid re-entering valid information and lets them spot mistakes in invalid data. The recipe's category is also preselected by default during these actions.
+
+To make this process smoother, there is a helper function called `isSelected` that automatically picks the right category. This ensures a better overall experience for users in the system.
 
 **Recipe Title Uniqueness:**
 The recipes table lacks a UNIQUE constraint on the title column, allowing modifications without altering the recipe name. To prevent confusion, the recipe creation middleware checks for an existing recipe with the same name before creating it.

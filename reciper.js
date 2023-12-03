@@ -153,7 +153,7 @@ app.get("/category/:id",
       const OFFSET = (PAGE - 1) * LIMIT;
       let pagination = res.locals.store.getPaginationResult(count, PAGE, LIMIT);
       let recipes = await res.locals.store.getPaginatedRecipes(+categoryId, LIMIT, OFFSET);
-      if (PAGE > pagination.totalPages)  req.flash("error", "Invalid page number.");
+      if (PAGE > pagination.totalPages) req.flash("error", "Invalid page number.");
       res.render("category", {
         recipes,
         categoryTitle,
