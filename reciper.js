@@ -48,7 +48,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//Chek if the user is authenticated
+//Chek if the user is authenticated and stores the path for redirection if necessary.
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
     req.session.requestedUrl = req.path;
@@ -62,7 +62,7 @@ const requiresAuthentication = (req, res, next) => {
 //validates the id route parameter
 const validateId = (req, res, next) => {
   let param = req.params.id;
-  if (isNaN(+param)) next(new Error("Invalid parameter."));
+  if (isNaN(+param)) next(new Error("Invalid id."));
   next();
 };
 
@@ -75,11 +75,11 @@ const recipeValidation = () => {
       .isLength({ min:1 })
       .withMessage("Recipes must have a title."),
     body("serves")
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("There must be at least one serve."),
+      .isInt({ min: 1 })
+      .withMessage("Serves must be a number greater that 0."),
     body("prep_time")
-      .custom(value => parseFloat(value) > 0)
-      .withMessage("Every preparation must take at least one minute."),
+      .isInt({ min:1 })
+      .withMessage("Preparation time must be a number greater than 0."),
     body("ingredients")
       .trim()
       .escape()
@@ -93,7 +93,7 @@ const recipeValidation = () => {
   ];
 };
 
-//View helper to automatically preselect an option in a dropdown input that has already been chosen, whether when editing an existing recipe or creating a new one.
+//View helper to automatically preselect an option in a dropdown input that has already been chosen.
 app.locals.isSelected = (option, category) => {
   return +option === +category ? true : false;
 };
@@ -233,7 +233,7 @@ app.get("/recipes/edit/:id",
   })
 );
 
-//If the user insert any invalid path, will be redirected to home.
+//If the user insert any invalid path, will be redirected to the home page.
 app.get('*', (req, res) => {
   res.redirect("/home");
 });
@@ -258,7 +258,7 @@ app.post("/categories/new",
         category,
         flash: req.flash()
       });
-    }
+    };
 
     if(!errors.isEmpty()) {
       req.flash("error", errors.errors[0].msg);
@@ -271,7 +271,7 @@ app.post("/categories/new",
       if(!created) throw new Error("Not found.");
       req.flash("success", "The new category has been added to your book.");
       res.redirect("/home");
-    }
+    };
   })
 );
   // Edit a category
@@ -296,7 +296,7 @@ app.post("/categories/edit/:id",
         category,
         flash: req.flash()
       });
-    }
+    };
 
     if(!errors.isEmpty()) {
       req.flash("error", errors.errors[0].msg);
@@ -309,7 +309,7 @@ app.post("/categories/edit/:id",
       if (!updated) throw new Error("Not found.");
       req.flash("success", "The category has been modified.");
       res.redirect(`/category/${id}`);
-    }
+    };
   }) 
 );
 
