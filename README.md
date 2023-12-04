@@ -59,6 +59,8 @@ The recipes table lacks a UNIQUE constraint on the title column allowing modific
 **About queries**:
 I opted for using LIMIT/OFFSET for pagination because I expect the recipe database not to have an excessively large number of recipes. This approach should be fast enough for its intended purpose.
 
+When rendering the home page, where the user's categories are displayed, I also wanted to show the number of recipes for every category. To achieve this, I chose to use an outer join to obtain the count of recipes for each category.
+
 When rendering the category view, which includes all the recipes for that category, I need to retrieve the category title, the total count of results and the paginated recipes. I could have used a single query that joins tables and counts the total results, like the following:
 
 `SELECT recipes.*, COUNT(*) OVER () AS total_count, category
@@ -68,7 +70,7 @@ When rendering the category view, which includes all the recipes for that catego
   ORDER BY LOWER(recipe)
   LIMIT $3 OFFSET $4`
 
-In my design, using a single query with joins and counting wouldn't have allowed me to achieve the specific data structure I envisioned. Here's why:
+However, using a single query with joins and counting wouldn't have allowed me to achieve the specific data structure I envisioned. Here's why:
 
 - If a category is not available, I want to throw an error. This ensures that the system communicates the issue clearly to the user.
 - When the user manually chooses a page for pagination and sets an invalid page number, I prefer to handle this scenario differently. Instead of throwing an error, I want to display a friendly flash message, maintaining a smooth user experience.
